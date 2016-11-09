@@ -1,0 +1,87 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+use work.all;
+
+entity branch_logic is
+  port(
+    PC_val            :       in  std_logic_vector(31 downto 0);         -- PC + 4 value
+    isJump            :       in  std_logic;                             -- jump instruction when 1, branch otherwise
+    branch_target     :       in  std_logic_vector(15 downto 0);         -- Lower 16 bits of instruction
+    jump_target       :       in  std_logic_vector(25 downto 0);         -- Lower 26 bits of instruction
+    isJump_reg        :       in  std_logic;                             -- 1 when jr or jalr instruction ie opcode(instr(31:26)) of 0, func (instr(5:0)) of 001000 or 100010 respectively
+    jump_reg          :       in  std_logic_vector(31 downto 0);         -- New PC value if jr or jalr instruction, read from reg file location specified by instr(25:21)
+    PC_new            :       out std_logic_vector(31 downto 0);         -- New PC value
+    link_address      :       out std_logic_vector(31 downto 0));        -- Old PC value for linking instructions
+end branch_logic;
+
+architecture structure of branch_logic is
+  
+component SixteenTo32Extender is
+  port(
+    input16           :   in  std_logic_vector(15 downto 0);
+    control           :   in  std_logic;
+    output32          :   out std_logic_vector(31 downto 0));
+end component;
+
+component N_Bit_FullAdderStructural is
+  
+  generic(N : integer := 32);
+  
+  port(
+    a_input_n   :   in std_logic_vector(N-1 downto 0);
+    b_input_n   :   in std_logic_vector(N-1 downto 0);
+    i_Cin_n     :   in std_logic;
+    o_Sum_n     :   out std_logic_vector(N-1 downto 0);
+    o_Cout_n    :   out std_logic);
+    
+end component;
+  
+signal branch_target32, branch_target32_sll2, new_target, jump_target32     :    std_logic_vector(31 downto 0);
+signal fin_jump_target, fin_branch_target                                   :    std_logic_vector(31 downto 0);
+signal jump_target28                                                        :    std_logic_vector(27 downto 0);
+signal carry_out                                                            :    std_logic;
+
+begin
+  
+  extender: Sixteento32Extender                     -- Sign extend 16 bit branch input to 32 bits
+    port map(
+      input16          =>       branch_target,
+      control          =>       '1',
+      output32         =>       branch_target32);
+      
+  branch_target32_sll2        <=       branch_target32(31 downto 2) & "00";    -- Shift sign extended branch target left 2
+  jump_target28               <=       jump_target & "00";                     -- Shift 26 bit jump target left 2
+  jump_target32               <=       PC_val(31 downto 28) & jump_target28;   -- Make bits 31 to 28 of jump target the upper 4 bits of the current PC
+  
+  adder: N_Bit_FullAdderStructural    -- Add branch target to PC value
+    port map(
+      a_input_n        =>        PC_val,
+      b_input_n        =>        branch_target32_sll2,
+      i_Cin_n          =>        '0',
+      o_Sum_n          =>        new_target,
+      o_Cout_n         =>        carry_out);
+      
+  fin_jump_target      <=        jump_target32;       -- New PC value if jump instruction
+  fin_branch_target    <=        new_target;          -- New PC value if branch instruction
+  
+  process
+    begin
+      if isJump = '1' then                   
+        
+        PC_new         <=      fin_jump_target;       -- If jump instruction, set PC to jump target
+        
+        if(isJump_reg = '1') then
+          PC_new       <=      jump_reg;              -- If jump instruction AND (jr OR jalr) then PC is register value
+        end if;
+      
+      else 
+        PC_new         <=      fin_branch_target;     -- Else, set PC to branch target
+      end if;
+      
+      wait for 10 ns;
+  end process; 
+  
+  link_address         <=       PC_val;                -- Old PC value to be saved for linking
+
+end structure;
