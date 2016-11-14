@@ -29,9 +29,8 @@ end component;
 
 
 -- Signals to connect to the struct_ones module
-signal s_reg_write,s_reset, s_load_rd_rt, s_mem_to_reg, s_mem_write, s_load_which_immediate, s_load_is_jump, s_load_type_sign, s_load_is_jump_reg, s_load_is_And_Link : std_logic;
+signal s_reg_write,s_load_rd_rt, s_mem_to_reg, s_mem_write, s_load_which_immediate, s_load_is_jump, s_load_type_sign, s_load_is_jump_reg, s_load_is_And_Link : std_logic;
 signal s_load_which_load, s_load_size: std_logic_vector(1 downto 0);
-signal s_op_in : std_logic_vector(2 downto 0);
 signal s_in_op_code, s_in_function_code: std_logic_vector(5 downto 0);
 signal s_in_branch_code : std_logic_vector(4 downto 0);
 

@@ -7,19 +7,12 @@ entity alu_controller is
 		in_op_code  : in std_logic_vector(5 downto 0);
 		in_function_code : in std_logic_vector(5 downto 0);
 		in_sft_amount : in std_logic_vector(4 downto 0);
-		ALU_SRC: out std_logic;
-		op: out std_logic_vector(2 downto 0);
-		add_sub: out std_logic;
-		load_type: out std_logic;
-		sel_shift_v: out std_logic;
-		sel_srl_sll: out std_logic;
-		sel_srl_sra: out std_logic;
-		load_alu_shift_mult: out std_logic_vector(1 downto 0));
+		out_control : out std_logic_vector(10 downto 0));
 end alu_controller;
 
 architecture structure of alu_controller is 
 
-signal out_control, out_control_function_code, out_control_op_code : std_logic_vector(10 downto 0);
+signal out_control_function_code, out_control_op_code : std_logic_vector(10 downto 0);
 begin
 
 	with in_function_code select 
@@ -98,25 +91,10 @@ begin
 if (in_op_code = "000000") then
 out_control <= out_control_function_code;
 
-
 else
 out_control <= out_control_op_code;
 
-
 end if;
 end process;
-
-ALU_SRC <=out_control(10);
-op <=out_control(9 downto 7);
-add_sub <= out_control(6);
-load_type <=out_control(5);
-sel_srl_sll <= out_control(4);
-sel_srl_sra <= out_control(3);
-sel_shift_v <= out_control(2);
-load_alu_shift_mult <= out_control(1 downto 0);
-
-
-
-
 
 end structure;

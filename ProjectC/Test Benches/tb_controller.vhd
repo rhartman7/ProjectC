@@ -14,23 +14,12 @@ component controller
 		in_op_code  : in std_logic_vector(5 downto 0);
 		in_function_code : in std_logic_vector(5 downto 0);
 		in_branch_code : in std_logic_vector(4 downto 0);
-		reg_write: out std_logic;
-		load_rd_rt: out std_logic;
-		mem_to_reg: out std_logic;
-		load_which_immediate: out std_logic;
-		mem_write: out std_logic;
-		load_size: out std_logic_vector(1 downto 0);
-		load_which_load: out std_logic_vector(1 downto 0);
-		load_is_jump: out std_logic;
-		load_type_sign: out std_logic;
-		load_is_jump_reg: out std_logic;
-		load_is_And_Link: out std_logic);
+		out_control : out std_logic_vector(12 downto 0));
 end component;
 
 
 -- Signals to connect to the struct_ones module
-signal s_reg_write,s_load_rd_rt, s_mem_to_reg, s_mem_write, s_load_which_immediate, s_load_is_jump, s_load_type_sign, s_load_is_jump_reg, s_load_is_And_Link : std_logic;
-signal s_load_which_load, s_load_size: std_logic_vector(1 downto 0);
+signal s_out_control: std_logic_vector(12 downto 0);
 signal s_in_op_code, s_in_function_code: std_logic_vector(5 downto 0);
 signal s_in_branch_code : std_logic_vector(4 downto 0);
 
@@ -41,17 +30,7 @@ DUT: controller
 		in_op_code => s_in_op_code,
 		in_function_code => s_in_function_code,
 		in_branch_code => s_in_branch_code,
-		reg_write => s_reg_write,
-		load_rd_rt =>s_load_rd_rt,
-		mem_to_reg =>s_mem_to_reg,
-		load_which_immediate =>s_load_which_immediate,
-		mem_write =>s_mem_write,
-		load_size =>s_load_size,
-		load_which_load =>s_load_which_load,
-		load_is_jump =>s_load_is_jump,
-		load_type_sign =>s_load_type_sign,
-		load_is_jump_reg=> s_load_is_jump_reg,
-		load_is_And_Link=> s_load_is_And_Link);
+		out_control => s_out_control);
 
  
 

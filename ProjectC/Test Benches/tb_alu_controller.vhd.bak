@@ -230,6 +230,6 @@ DUT: alu_controller
 	s_in_op_code <= "000000";
 	s_in_function_code <="000111";
 	s_in_sft_amount <= "00000";
-	wait for 100 ns;
+	wait;
   end process;
 end behavior;

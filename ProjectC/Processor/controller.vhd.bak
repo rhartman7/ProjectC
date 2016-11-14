@@ -7,22 +7,12 @@ entity controller is
 		in_op_code  : in std_logic_vector(5 downto 0);
 		in_function_code : in std_logic_vector(5 downto 0);
 		in_branch_code : in std_logic_vector(4 downto 0);
-		reg_write: out std_logic;
-		load_rd_rt: out std_logic;
-		mem_to_reg: out std_logic;
-		load_which_immediate: out std_logic;
-		mem_write: out std_logic;
-		load_size: out std_logic_vector(1 downto 0);
-		load_which_load: out std_logic_vector(1 downto 0);
-		load_is_jump: out std_logic;
-		load_type_sign: out std_logic;
-		load_is_jump_reg: out std_logic;
-		load_is_And_Link: out std_logic);
+		out_control : out std_logic_vector(12 downto 0));
 end controller;
 
 architecture structure of controller is 
 
-signal out_control,out_control_function_code, out_control_op_code, out_control_special_branch : std_logic_vector(12 downto 0);
+signal out_control_function_code, out_control_op_code, out_control_special_branch : std_logic_vector(12 downto 0);
 begin
 	with in_function_code select out_control_function_code <=
 		--add
@@ -126,75 +116,17 @@ with in_branch_code select out_control_special_branch <=
 		"1111111111111" when others;		
 
 
-process (in_op_code, out_control, out_control_function_code, out_control_special_branch, out_control_op_code)
+process (out_control, out_control_function_code, out_control_special_branch, out_control_op_code)
 begin
 if (in_op_code = "000000") then
 out_control <= out_control_function_code;
-reg_write <=out_control(12);
-load_rd_rt <= out_control(11);
-mem_to_reg <= out_control(10);
-load_which_immediate <=out_control(9);
-mem_write <= out_control(8);
-load_size <= out_control(7 downto 6);
-load_which_load <= out_control(5 downto 4);
-load_type_sign <= out_control(3);
-load_is_jump <= out_control(2);
-load_is_And_Link <= out_control(1);
-load_is_jump_reg <= out_control(0);
-
 
 elsif ( in_op_code = "000001") then
 out_control <= out_control_special_branch;
-reg_write <=out_control(12);
-load_rd_rt <= out_control(11);
-mem_to_reg <= out_control(10);
-load_which_immediate <=out_control(9);
-mem_write <= out_control(8);
-load_size <= out_control(7 downto 6);
-load_which_load <= out_control(5 downto 4);
-load_type_sign <= out_control(3);
-load_is_jump <= out_control(2);
-load_is_And_Link <= out_control(1);
-load_is_jump_reg <= out_control(0);
-
-
 else
 out_control <= out_control_op_code;
-reg_write <=out_control(12);
-load_rd_rt <= out_control(11);
-mem_to_reg <= out_control(10);
-load_which_immediate <=out_control(9);
-mem_write <= out_control(8);
-load_size <= out_control(7 downto 6);
-load_which_load <= out_control(5 downto 4);
-load_type_sign <= out_control(3);
-load_is_jump <= out_control(2);
-load_is_And_Link <= out_control(1);
-load_is_jump_reg <= out_control(0);
-
-
 end if;
 
 end process;
-
-
-
-
-
---reg_write <=out_control(0);
---load_rd_rt <= out_control(1);
---mem_to_reg <= out_control(2);
---load_which_immediate <=out_control(3);
---mem_write <= out_control(4);
---load_size <= out_control(6 downto 5);
---load_which_load <= out_control(8 downto 7);
---load_type_sign <= out_control(8);
---load_is_jump <= out_control(10);
---load_is_And_Link <= out_control(11);
---load_is_jump_reg <= out_control(12);
-
-
-
-
 
 end structure;

@@ -14,21 +14,12 @@ component alu_controller
 		in_op_code  : in std_logic_vector(5 downto 0);
 		in_function_code : in std_logic_vector(5 downto 0);
 		in_sft_amount : in std_logic_vector(4 downto 0);
-		ALU_SRC: out std_logic;
-		op: out std_logic_vector(2 downto 0);
-		add_sub: out std_logic;
-		load_type: out std_logic;
-		sel_shift_v: out std_logic;
-		sel_srl_sll: out std_logic;
-		sel_srl_sra: out std_logic;
-		load_alu_shift_mult: out std_logic_vector(1 downto 0));
+		out_control : out std_logic_vector(10 downto 0));
 end component;
 
 
 -- Signals to connect to the struct_ones module
-signal s_ALU_SRC, s_add_sub, s_load_type, s_sel_shift_v, s_sel_srl_sll, s_sel_srl_sra : std_logic;
-signal s_load_alu_shift_mult: std_logic_vector(1 downto 0);
-signal s_op_in : std_logic_vector(2 downto 0);
+signal s_out_control : std_logic_vector(10 downto 0);
 signal s_in_op_code, s_in_function_code: std_logic_vector(5 downto 0);
 signal s_in_sft_amount: std_logic_vector(4 downto 0);
 
@@ -40,14 +31,7 @@ DUT: alu_controller
 		in_op_code => s_in_op_code, 
 		in_function_code => s_in_function_code, 
 		in_sft_amount => s_in_sft_amount, 
-		ALU_SRC => s_ALU_SRC, 
-		op => s_op_in, 
-		add_sub => s_add_sub, 
-		load_type => s_load_type, 
-		sel_shift_v => s_sel_shift_v, 
-		sel_srl_sll => s_sel_srl_sll, 
-		sel_srl_sra => s_sel_srl_sra, 
-		load_alu_shift_mult => s_load_alu_shift_mult);
+		out_control => s_out_control);
 
  
 
