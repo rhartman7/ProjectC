@@ -141,27 +141,6 @@ component controller
 end component;
 
 --PC and Branches
-  generic (N : integer := 32);
-  
-  port(
-   	ID_controller 	: in std_logic_vector(10 downto 0);
-	ID_alu_controller: in std_logic_vector(12 downto 0);
-	ID_reg_out_1 	: in std_logic_vector(31 downto 0);
-	ID_reg_out_2	: in std_logic_vector(31 downto 0);
-	ID_immediate	: in std_logic_vector(31 downto 0);
-	ID_branch_logic	: in std_logic_vector(31 downto 0);
-	reset 		: in std_logic;
-	clk		: in std_logic;
-    	ID_EX_controller 	: out std_logic_vector(10 downto 0);
-	ID_EX_alu_controller	: out std_logic_vector(12 downto 0);
-	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
-	ID_EX_reg_out_2		: out std_logic_vector(31 downto 0);
-	ID_EX_immediate		: out std_logic_vector(31 downto 0);
-	ID_EX_branch_logic	: out std_logic_vector(31 downto 0));
-  
-end component;
-
-
 
 component PC_Register
   port(
@@ -212,6 +191,7 @@ component IF_ID_register
    	IF_ID_pc        	: out std_logic_vector(31 downto 0));
   
 end component;
+
 component ID_EX_register
   generic (N : integer := 32);
   
@@ -221,6 +201,7 @@ component ID_EX_register
 	ID_reg_out_1 	: in std_logic_vector(31 downto 0);
 	ID_reg_out_2	: in std_logic_vector(31 downto 0);
 	ID_immediate	: in std_logic_vector(31 downto 0);
+	ID_instruction	: in std_logic_vector(31 downto 0);
 	ID_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
@@ -229,6 +210,7 @@ component ID_EX_register
 	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
 	ID_EX_reg_out_2		: out std_logic_vector(31 downto 0);
 	ID_EX_immediate		: out std_logic_vector(31 downto 0);
+	ID_EX_instruction	: out std_logic_vector(31 downto 0);
 	ID_EX_branch_logic	: out std_logic_vector(31 downto 0));
   
 end component;
@@ -252,7 +234,8 @@ component EX_MEM_register
 	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0));
   
 end component;
-component MEM_WB_register
+
+component MEM_WB_register 
   generic (N : integer := 32);
   
   port(
@@ -272,35 +255,44 @@ component MEM_WB_register
 end component;
 
 --Signals for register file
-signal s_write_data, ID_reg_out_1, ID_reg_out_2, ID_EX_reg_out_1, ID_EX_reg_out_2: std_logic_vector(31 downto 0);
+signal s_write_data, ID_reg_out_1, ID_reg_out_2, ID_EX_reg_out_1, ID_EX_reg_out_2, EX_MEM_reg_out_2: std_logic_vector(31 downto 0);
 signal s_write_address, s_write_address_final : std_logic_vector(4 downto 0);
 --Signals for Data Memory
-signal  s_mem_out, s_store_data: std_logic_vector(31 downto 0);
+signal  MEM_data_mem_out, s_store_data, MEM_WB_data_mem_out: std_logic_vector(31 downto 0);
 signal s_store_byteena: std_logic_vector(3 downto 0);
 --Signals for Load
 signal s_which_load : std_logic_vector(31 downto 0);
 --Signals for PC and Instruction Memory
-signal s_IF_instruction : std_logic_vector(31 downto 0);
+signal IF_instruction, IF_ID_instruction, ID_EX_instruction : std_logic_vector(31 downto 0);
 -- Signal for Immediate
 signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 --signals for ALU
-signal s_alu_overflow, s_alu_c_out, s_alu_zero_out : std_logic;
-signal s_input_2_alu, s_write_data_final: std_logic_vector(31 downto 0);
+signal s_alu_overflow,EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out, s_alu_zero_out : std_logic;
+signal s_write_data_final: std_logic_vector(31 downto 0);
 --signal for branch detection unit
-signal s_take_branch, ID_EX_branch_logic: std_logic;
+signal s_take_branch: std_logic;
 --signals for PC
 signal  IF_ID_PC,IF_PC, s_link_address : std_logic_vector(31 downto 0);
-
-signal s_load_is_And_Link, s_load_is_jump_reg : std_logic;
+--brnach
+signal ID_branch_logic, ID_EX_branch_logic, EX_branch_logic, EX_MEM_branch_logic, MEM_branch_logic, MEM_WB_branch_logic  : std_logic_vector(31 downto 0);
 
 
 --CONTROL SIGNALS ALU
-signal  ID_controller,ID_EX_controller: std_logic_vector(12 downto 0);
+signal  ID_controller,ID_EX_controller, EX_MEM_controller, MEM_WB_controller : std_logic_vector(12 downto 0);
 
 --CONTROL SIGNALS 
-signal ID_alu_controller, ID_EX_alu_controller: std_logic_vector(1 downto 0);
+signal ID_alu_controller, ID_EX_alu_controller, EX_MEM_alu_controller, MEM_WB_alu_controller : std_logic_vector(1 downto 0);
 
 begin
+
+
+-- MUX - which pc value in used as pc current
+which_pc_value: mux_21_n
+	port MAP(
+		i_X  =>s_pc_current,
+		i_Y =>s_new_PC_current,
+		s_1 =>s_take_branch,
+		o_Z => s_PC_value);
 
 --PC Register
 pc: PC_Register
@@ -361,7 +353,7 @@ rd_rt_write_register : mux_21_5_bit
 	port MAP(
 		i_X  =>IF_ID_instruction(15 downto 11),
 		i_Y =>IF_ID_instruction(20 downto 16),
-		s_1 =>ID_controller(11),		--load_rd_rt
+		s_1 =>MEM_WB_controller(11),		--load_rd_rt
 		o_Z => s_write_address);
 
 -- MUX - choosed whether write to register 31 or not
@@ -369,7 +361,7 @@ reg_write_address : mux_21_5_bit
 	port MAP(
 		i_X  =>s_write_address,
 		i_Y => "11111",
-		s_1 =>ID_controller(1),			--load_is_and_link
+		s_1 =>MEM_WB_controller(1),			--load_is_and_link
 		o_Z => s_write_address_final);
 
 
@@ -380,7 +372,7 @@ port MAP (
 		i_reg2  => IF_ID_instruction(20 downto 16), 
 		i_data => s_write_data_final,
 		i_writereg  => s_write_address_final, 
-		i_WE  => ID_controller(12)		--s_reg_write, 
+		i_WE  => MEM_WB_controller(12),		--s_reg_write, 
 		i_CLK  => clk,
 		i_RST => s_reset,
 		o_reg1  => ID_reg_out_1,
@@ -407,6 +399,15 @@ branch_log: branch_logic
     link_address => ID_branch_logic);        -- Old PC value for linking instructions
 
 
+--Branch Detection
+branch_detection: branch_detection_Unit
+  port MAP(
+    instruction => IF_ID_instruction, 
+    reg1  =>ID_reg_out_1,
+    reg2 =>ID_reg_out_2,
+    take_Branch => s_take_branch);
+
+
 
 ID_EX_reg: ID_EX_register 
   port MAP(
@@ -415,7 +416,8 @@ ID_EX_reg: ID_EX_register
 	ID_reg_out_1=>ID_reg_out_1,
 	ID_reg_out_2=>ID_reg_out_2,
 	ID_immediate=>ID_immediate,
-	ID_branch_logic=>ID_branch_logic,
+	ID_instruction=>IF_ID_instruction,
+	ID_branch_logic=> ID_branch_logic,
 	reset=>s_reset,
 	clk=>clk,
     	ID_EX_controller=>ID_EX_controller,
@@ -423,71 +425,106 @@ ID_EX_reg: ID_EX_register
 	ID_EX_reg_out_1=>ID_EX_reg_out_1,
 	ID_EX_reg_out_2=>ID_EX_reg_out_2,
 	ID_EX_immediate=>ID_EX_immediate,
+	ID_EX_instruction=>ID_EX_instruction
 	ID_EX_branch_logic=>ID_EX_branch_logic);
-
---------STOPPPPPPPEDDDD HEEREREREREERERERE!!!!
 
 
 --MUX - chooses whether the immediate value or regist file output goes into the ALU
 o_reg2_immediate_alu_in : mux_21_n
 	port MAP(
-		i_X  =>s_reg_out_2,
-		i_Y =>s_immediate_out,
-		s_1 =>s_alu_src,
+		i_X  =>ID_EX_reg_out_2,
+		i_Y =>ID_EX_immediate,
+		s_1 =>ID_EX_alu_controller(10),			--s_alu_src,
 		o_Z => s_input_2_alu);
 
 
 -- ALU
 alu_mult_shifter : alu_mult_shift
 	port MAP (
-		a_in =>s_reg_out_1,
+		a_in =>ID_EX_reg_out_1,
 		b_in => s_input_2_alu, 
-		op => s_op,
-		add_sub => s_add_sub,
-		load_type => s_load_type,
-		sel_shift_v => s_sel_shift_v,
-		shift_amount => s_instruction_out(10 downto 6),
-		sel_srl_sll=> s_sel_srl_sll,
-		sel_srl_sra => s_sel_srl_sra,
-		load_alu_shift_mult => s_load_alu_shift_mult,
-		result_out => s_alu_out,
+		op => ID_EX_alu_controller(9 downto 7),		--s_op,
+		add_sub => ID_EX_alu_controller(6),		--s_add_sub,
+		load_type => ID_EX_alu_controller(5)		--s_load_type,
+		sel_shift_v => ID_EX_alu_controller(2)		--s_sel_shift_v,
+		shift_amount => ID_EX_instruction(10 downto 6),
+		sel_srl_sll=> ID_EX_alu_controller(4)		--s_sel_srl_sll,
+		sel_srl_sra => ID_EX_alu_controller(3)		--s_sel_srl_sra,
+		load_alu_shift_mult => ID_EX_alu_controller(1 downto 0)		--s_load_alu_shift_mult,
+		result_out =>	EX_alu_out,
 		overflow => s_alu_overflow,
 		zero_out => s_alu_zero_out,
 		c_out 	=> s_alu_c_out);
 
+
+Ex_MEM_Reg: EX_MEM_register
+port MAP	(
+   	EX_controller 		=>ID_EX_controller,
+	EX_alu_controller	=>ID_EX_alu_controller,
+	EX_alu_out 		=>EX_alu_out,
+	EX_reg_out_2		=>ID_EX_reg_out_2,
+	EX_branch_logic		=>EX_branch_logic,
+	reset 			=>s_reset,
+	clk			=>clk,
+    	EX_MEM_controller 	=>EX_MEM_controller,
+	EX_MEM_alu_controller	=>EX_MEM_alu_controller,
+	EX_MEM_alu_out	 	=>EX_MEM_alu_out,
+	EX_MEM_reg_out_2	=>EX_MEM_reg_out_2,
+	EX_MEM_branch_logic	=>EX_MEM_branch_logic);
+
+
+ --store component
+store_data: store
+	port MAP
+		(
+		alu_in => EX_MEM_alu_out,
+		reg_out_2_in =>EX_MEM_reg_out_2,
+		load_size =>EX_MEM_controller(6 downto 5),		--s_load_size,
+		store_data=>s_store_data,
+		store_byteena=>s_store_byteena);
+
  --data memory
 data_mem : mem
-	port MAP  ( 	address	=>s_alu_out(11 downto 2),
+	port MAP  ( 	address	=>EX_MEM_alu_out(11 downto 2),
 			byteena	=> s_store_byteena,
 			clock	=>clk,
 			data	=>s_store_data,
 			wren	=>s_mem_write,
-			q	=> s_mem_out); 
+			q	=> MEM_data_mem_out); 
+
+MEM_WB_reg: MEM_WB_register
+
+  port MAP(
+   	MEM_controller 		=>EX_MEM_controller,
+	MEM_alu_controller	=>EX_MEM_alu_controller,
+	MEM_alu_out 		=>EX_MEM_alu_out,
+	MEM_data_mem_out	=>MEM_data_mem_out,
+	MEM_branch_logic	=>MEM_branch_logic, 
+	reset 		=>s_reset,
+	clk		=>clk,
+    	MEM_WB_controller 	=>MEM_WB_controller ,
+	MEM_WB_alu_controller	=>MEM_WB_alu_controller ,
+	MEM_WB_alu_out	 	=>MEM_WB_alu_out,
+	MEM_WB_data_mem_out	=>MEM_WB_data_mem_out,
+	MEM_WB_branch_logic	=> MEM_WB_branch_logic);
+
+
 --load component
 load_data :load
 	port MAP (
-		in_memory  => s_mem_out,
-		load_which_load => s_load_which_load, 
-		load_type_sign => s_type_sign,
-		load_alu_out => s_alu_out(1 downto 0),
+		in_memory  => MEM_WB_data_mem_out,
+		load_which_load => MEM_WB_controller(5 downto 4),		--s_load_which_load, 
+		load_type_sign => MEM_WB_controller(3),				--s_type_sign,
+		load_alu_out => MEM_WB_alu_out(1 downto 0),
 		out_load => s_which_load);
 
---store component
-store_data: store
-	port MAP
-		(
-		alu_in => s_alu_out,
-		reg_out_2_in =>s_reg_out_2,
-		load_size =>s_load_size,
-		store_data=>s_store_data,
-		store_byteena=>s_store_byteena);
 
 -- MUX - choosed whether alu_out or s_which_load for write data register
 alu_out_lw_write_data_register : mux_21_n
 	port MAP(
-		i_X  =>s_alu_out,
+		i_X  =>MEM_WB_alu_out,
 		i_Y =>s_which_load,
-		s_1 =>ID_controller(10),		--s_mem_to_reg
+		s_1 =>MEM_WB_controller(10),		--s_mem_to_reg
 		o_Z => s_write_data);
 
 -- MUX - choosed whether link address or load/alu_out
@@ -495,25 +532,13 @@ link_address : mux_21_n
 	port MAP(
 		i_X  =>s_write_data,
 		i_Y =>s_link_address,
-		s_1 =>ID_controller(1),			--load_is_and_link
+		s_1 =>MEM_WB_controller(1),			--load_is_and_link
 		o_Z => s_write_data_final);
 
 
---Branch Detection
-branch_detection: branch_detection_Unit
-  port MAP(
-    instruction => s_instruction_out, 
-    reg1  =>s_reg_out_1,
-    reg2 =>s_reg_out_2,
-    take_Branch => s_take_branch);
 
--- MUX - which pc value in used as pc current
-which_pc_value: mux_21_n
-	port MAP(
-		i_X  =>s_pc_current,
-		i_Y =>s_new_PC_current,
-		s_1 =>s_take_branch,
-		o_Z => s_PC_value);
+
+
 
 
 

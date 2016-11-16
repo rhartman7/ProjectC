@@ -102,7 +102,4 @@ branch_logic_reg: N_BitRegister
 
 
 
-
-
-
 end structure;

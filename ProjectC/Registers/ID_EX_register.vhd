@@ -11,6 +11,7 @@ entity ID_EX_register is
 	ID_reg_out_1 	: in std_logic_vector(31 downto 0);
 	ID_reg_out_2	: in std_logic_vector(31 downto 0);
 	ID_immediate	: in std_logic_vector(31 downto 0);
+	ID_instruction	: in std_logic_vector(31 downto 0);
 	ID_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
@@ -19,6 +20,7 @@ entity ID_EX_register is
 	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
 	ID_EX_reg_out_2		: out std_logic_vector(31 downto 0);
 	ID_EX_immediate		: out std_logic_vector(31 downto 0);
+	ID_EX_instruction	: out std_logic_vector(31 downto 0);
 	ID_EX_branch_logic	: out std_logic_vector(31 downto 0));
   
 end ID_EX_register;
@@ -94,13 +96,13 @@ alu_control_reg : register_12_bit
     i_Input => ID_alu_controller,
     o_Out => ID_EX_alu_controller);
 
-branch_logic_reg: N_BitRegister
+instruction_reg: N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
     i_WE => '1',
-    i_Input => ID_branch_logic,
-    o_Out => ID_EX_branch_logic);
+    i_Input => ID_instruction,
+    o_Out => ID_EX_instruction);
 
 immediate_reg : N_BitRegister
   port MAP(
@@ -109,6 +111,15 @@ immediate_reg : N_BitRegister
     i_WE => '1',
     i_Input => ID_immediate,
     o_Out => ID_EX_immediate);
+
+branch_logic_reg: N_BitRegister
+  port MAP(
+    i_CLK  => clk,
+    i_RST => reset,
+    i_WE => '1',
+    i_Input => ID_branch_logic,
+    o_Out => ID_EX_branch_logic);
+
 
 
 
