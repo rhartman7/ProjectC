@@ -6,8 +6,8 @@ entity ID_EX_register is
   generic (N : integer := 32);
   
   port(
-   	ID_controller 	: in std_logic_vector(10 downto 0);
-	ID_alu_controller: in std_logic_vector(12 downto 0);
+ 	ID_controller 	: in std_logic_vector(12 downto 0);
+	ID_alu_controller: in std_logic_vector(10 downto 0);
 	ID_reg_out_1 	: in std_logic_vector(31 downto 0);
 	ID_reg_out_2	: in std_logic_vector(31 downto 0);
 	ID_immediate	: in std_logic_vector(31 downto 0);
@@ -15,8 +15,8 @@ entity ID_EX_register is
 	ID_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	ID_EX_controller 	: out std_logic_vector(10 downto 0);
-	ID_EX_alu_controller	: out std_logic_vector(12 downto 0);
+ 	ID_EX_controller 	: out std_logic_vector(12 downto 0);
+	ID_EX_alu_controller	: out std_logic_vector(10 downto 0);
 	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
 	ID_EX_reg_out_2		: out std_logic_vector(31 downto 0);
 	ID_EX_immediate		: out std_logic_vector(31 downto 0);
@@ -85,16 +85,16 @@ control_reg : Register_10_bit
     i_CLK  => clk,
     i_RST => reset,
     i_WE => '1',
-    i_Input => ID_controller,
-    o_Out => ID_EX_controller);
+    i_Input => ID_alu_controller,
+    o_Out => ID_EX_alu_controller);
 
 alu_control_reg : register_12_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
     i_WE => '1',
-    i_Input => ID_alu_controller,
-    o_Out => ID_EX_alu_controller);
+    i_Input => ID_controller,
+    o_Out => ID_EX_controller);
 
 instruction_reg: N_BitRegister
   port MAP(

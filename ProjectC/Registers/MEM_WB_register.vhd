@@ -6,15 +6,15 @@ entity MEM_WB_register is
   generic (N : integer := 32);
   
   port(
-   	MEM_controller 		: in std_logic_vector(10 downto 0);
-	MEM_alu_controller	: in std_logic_vector(12 downto 0);
+   	MEM_controller 		: in std_logic_vector(12 downto 0);
+	MEM_alu_controller	: in std_logic_vector(10 downto 0);
 	MEM_alu_out 		: in std_logic_vector(31 downto 0);
 	MEM_data_mem_out	: in std_logic_vector(31 downto 0);
 	MEM_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	MEM_WB_controller 	: out std_logic_vector(10 downto 0);
-	MEM_WB_alu_controller	: out std_logic_vector(12 downto 0);
+    	MEM_WB_controller 	: out std_logic_vector(12 downto 0);
+	MEM_WB_alu_controller	: out std_logic_vector(10 downto 0);
 	MEM_WB_alu_out	 	: out std_logic_vector(31 downto 0);
 	MEM_WB_data_mem_out	: out std_logic_vector(31 downto 0);
 	MEM_WB_branch_logic	: out std_logic_vector(31 downto 0));
@@ -76,7 +76,7 @@ data_mem_out_reg : N_BitRegister
     i_Input => MEM_data_mem_out,
     o_Out => MEM_WB_data_mem_out);
 
-control_reg : Register_10_bit
+control_reg : Register_12_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
@@ -84,7 +84,7 @@ control_reg : Register_10_bit
     i_Input => MEM_controller,
     o_Out => MEM_WB_controller);
 
-alu_control_reg : register_12_bit
+alu_control_reg : register_10_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,

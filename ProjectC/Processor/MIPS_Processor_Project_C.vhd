@@ -112,14 +112,7 @@ component alu_controller
 		in_op_code  : in std_logic_vector(5 downto 0);
 		in_function_code : in std_logic_vector(5 downto 0);
 		in_sft_amount : in std_logic_vector(4 downto 0);
-		ALU_SRC: out std_logic;
-		op: out std_logic_vector(2 downto 0);
-		add_sub: out std_logic;
-		load_type: out std_logic;
-		sel_shift_v: out std_logic;
-		sel_srl_sll: out std_logic;
-		sel_srl_sra: out std_logic;
-		load_alu_shift_mult: out std_logic_vector(1 downto 0));
+		out_control : out std_logic_vector(10 downto 0));
 end component;
 --controller
 component controller
@@ -127,17 +120,8 @@ component controller
 		in_op_code  : in std_logic_vector(5 downto 0);
 		in_function_code : in std_logic_vector(5 downto 0);
 		in_branch_code : in std_logic_vector(4 downto 0);
-		reg_write: out std_logic;
-		load_rd_rt: out std_logic;
-		mem_to_reg: out std_logic;
-		load_which_immediate: out std_logic;
-		mem_write: out std_logic;
-		load_size: out std_logic_vector(1 downto 0);
-		load_which_load: out std_logic_vector(1 downto 0);
-		load_is_jump: out std_logic;
-		load_type_sign: out std_logic;
-		load_is_jump_reg: out std_logic;
-		load_is_And_Link: out std_logic);
+			out_control : out std_logic_vector(12 downto 0));
+
 end component;
 
 --PC and Branches
@@ -196,8 +180,8 @@ component ID_EX_register
   generic (N : integer := 32);
   
   port(
-   	ID_controller 	: in std_logic_vector(10 downto 0);
-	ID_alu_controller: in std_logic_vector(12 downto 0);
+   	ID_controller 	: in std_logic_vector(12 downto 0);
+	ID_alu_controller: in std_logic_vector(10 downto 0);
 	ID_reg_out_1 	: in std_logic_vector(31 downto 0);
 	ID_reg_out_2	: in std_logic_vector(31 downto 0);
 	ID_immediate	: in std_logic_vector(31 downto 0);
@@ -205,8 +189,8 @@ component ID_EX_register
 	ID_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	ID_EX_controller 	: out std_logic_vector(10 downto 0);
-	ID_EX_alu_controller	: out std_logic_vector(12 downto 0);
+    	ID_EX_controller 	: out std_logic_vector(12 downto 0);
+	ID_EX_alu_controller	: out std_logic_vector(10 downto 0);
 	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
 	ID_EX_reg_out_2		: out std_logic_vector(31 downto 0);
 	ID_EX_immediate		: out std_logic_vector(31 downto 0);
@@ -220,15 +204,15 @@ component EX_MEM_register
   generic (N : integer := 32);
   
   port(
-   	EX_controller 	: in std_logic_vector(10 downto 0);
-	EX_alu_controller: in std_logic_vector(12 downto 0);
+   	EX_controller 	: in std_logic_vector(12 downto 0);
+	EX_alu_controller: in std_logic_vector(10 downto 0);
 	EX_alu_out 	: in std_logic_vector(31 downto 0);
 	EX_reg_out_2	: in std_logic_vector(31 downto 0);
 	EX_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	EX_MEM_controller 	: out std_logic_vector(10 downto 0);
-	EX_MEM_alu_controller	: out std_logic_vector(12 downto 0);
+    	EX_MEM_controller 	: out std_logic_vector(12 downto 0);
+	EX_MEM_alu_controller	: out std_logic_vector(10 downto 0);
 	EX_MEM_alu_out	 	: out std_logic_vector(31 downto 0);
 	EX_MEM_reg_out_2	: out std_logic_vector(31 downto 0);
 	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0));
@@ -239,15 +223,15 @@ component MEM_WB_register
   generic (N : integer := 32);
   
   port(
-   	MEM_controller 		: in std_logic_vector(10 downto 0);
-	MEM_alu_controller	: in std_logic_vector(12 downto 0);
+   	MEM_controller 		: in std_logic_vector(12 downto 0);
+	MEM_alu_controller	: in std_logic_vector(10 downto 0);
 	MEM_alu_out 		: in std_logic_vector(31 downto 0);
 	MEM_data_mem_out	: in std_logic_vector(31 downto 0);
 	MEM_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	MEM_WB_controller 	: out std_logic_vector(10 downto 0);
-	MEM_WB_alu_controller	: out std_logic_vector(12 downto 0);
+    	MEM_WB_controller 	: out std_logic_vector(12 downto 0);
+	MEM_WB_alu_controller	: out std_logic_vector(10 downto 0);
 	MEM_WB_alu_out	 	: out std_logic_vector(31 downto 0);
 	MEM_WB_data_mem_out	: out std_logic_vector(31 downto 0);
 	MEM_WB_branch_logic	: out std_logic_vector(31 downto 0));
@@ -264,11 +248,12 @@ signal s_store_byteena: std_logic_vector(3 downto 0);
 signal s_which_load : std_logic_vector(31 downto 0);
 --Signals for PC and Instruction Memory
 signal IF_instruction, IF_ID_instruction, ID_EX_instruction : std_logic_vector(31 downto 0);
+signal s_pc_current, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0);
 -- Signal for Immediate
 signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 --signals for ALU
-signal s_alu_overflow,EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out, s_alu_zero_out : std_logic;
-signal s_write_data_final: std_logic_vector(31 downto 0);
+signal EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out,  s_write_data_final, s_input_2_alu : std_logic_vector(31 downto 0);
+signal s_alu_zero_out, s_alu_c_out,s_alu_overflow : std_logic;
 --signal for branch detection unit
 signal s_take_branch: std_logic;
 --signals for PC
@@ -281,7 +266,7 @@ signal ID_branch_logic, ID_EX_branch_logic, EX_branch_logic, EX_MEM_branch_logic
 signal  ID_controller,ID_EX_controller, EX_MEM_controller, MEM_WB_controller : std_logic_vector(12 downto 0);
 
 --CONTROL SIGNALS 
-signal ID_alu_controller, ID_EX_alu_controller, EX_MEM_alu_controller, MEM_WB_alu_controller : std_logic_vector(1 downto 0);
+signal ID_alu_controller, ID_EX_alu_controller, EX_MEM_alu_controller, MEM_WB_alu_controller : std_logic_vector(10 downto 0);
 
 begin
 
@@ -318,18 +303,18 @@ instuction_mem_i : instruction_mem
 			wren	=>'0',
 			q	=> IF_instruction); 
 
-entity IF_ID_register is
-  generic (N : integer := 32);
+IF_ID_Reg: IF_ID_register
   
-  port(
+  port MAP(
+    
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
 	reset=>s_reset,
 	clk=>clk,
     	IF_ID_instruction=> IF_ID_instruction,
-   	IF_ID_pc=>IF_ID_PC,
+ 	IF_ID_pc=>IF_ID_PC);
   
-end IF_ID_register;
+
 
 
 --ALU controller 
@@ -338,7 +323,7 @@ alu_control: alu_controller
 		in_op_code => IF_ID_instruction(31 downto 26),
 		in_function_code =>IF_ID_instruction(5 downto 0),
 		in_sft_amount => IF_ID_instruction(10 downto 6),
-		=> ID_alu_controller);
+		out_control => ID_alu_controller);
 
 --Controller
 control : controller 
@@ -383,14 +368,14 @@ choose_immediate_value :immediate
 	port MAP(	
 		in_immediate  => IF_ID_instruction(15 downto 0),
 		in_upper_byte =>IF_ID_instruction(31 downto 16),
-		load_which_immediate => ID_controller(9)		--s_load_which_immediate,
+		load_which_immediate => ID_controller(9),		--s_load_which_immediate,
 		out_immediate=> ID_immediate);
 
 --branch logic
 branch_log: branch_logic
   port MAP(
     PC_val   => IF_ID_PC,    -- PC + 4 value
-    isJump => ID_controller(2)			--s_load_is_jump -- jump instruction when 1, branch otherwise
+    isJump => ID_controller(2),			--s_load_is_jump -- jump instruction when 1, branch otherwise
     branch_target => IF_ID_instruction(15 downto 0),         -- Lower 16 bits of instruction
     jump_target => IF_ID_instruction(25 downto 0),       -- Lower 26 bits of instruction
     isJump_reg => ID_controller(0),                             -- 1 when jr or jalr instruction ie opcode(instr(31:26)) of 0, func (instr(5:0)) of 001000 or 100010 respectively
@@ -411,7 +396,7 @@ branch_detection: branch_detection_Unit
 
 ID_EX_reg: ID_EX_register 
   port MAP(
-   	ID_controller=>ID_controller,
+ 	ID_controller=>ID_controller,
 	ID_alu_controller=>ID_alu_controller,
 	ID_reg_out_1=>ID_reg_out_1,
 	ID_reg_out_2=>ID_reg_out_2,
@@ -425,7 +410,7 @@ ID_EX_reg: ID_EX_register
 	ID_EX_reg_out_1=>ID_EX_reg_out_1,
 	ID_EX_reg_out_2=>ID_EX_reg_out_2,
 	ID_EX_immediate=>ID_EX_immediate,
-	ID_EX_instruction=>ID_EX_instruction
+	ID_EX_instruction=>ID_EX_instruction,
 	ID_EX_branch_logic=>ID_EX_branch_logic);
 
 
@@ -445,12 +430,12 @@ alu_mult_shifter : alu_mult_shift
 		b_in => s_input_2_alu, 
 		op => ID_EX_alu_controller(9 downto 7),		--s_op,
 		add_sub => ID_EX_alu_controller(6),		--s_add_sub,
-		load_type => ID_EX_alu_controller(5)		--s_load_type,
-		sel_shift_v => ID_EX_alu_controller(2)		--s_sel_shift_v,
+		load_type => ID_EX_alu_controller(5),		--s_load_type,
+		sel_shift_v => ID_EX_alu_controller(2),		--s_sel_shift_v,
 		shift_amount => ID_EX_instruction(10 downto 6),
-		sel_srl_sll=> ID_EX_alu_controller(4)		--s_sel_srl_sll,
-		sel_srl_sra => ID_EX_alu_controller(3)		--s_sel_srl_sra,
-		load_alu_shift_mult => ID_EX_alu_controller(1 downto 0)		--s_load_alu_shift_mult,
+		sel_srl_sll=> ID_EX_alu_controller(4),		--s_sel_srl_sll,
+		sel_srl_sra => ID_EX_alu_controller(3),		--s_sel_srl_sra,
+		load_alu_shift_mult => ID_EX_alu_controller(1 downto 0),		--s_load_alu_shift_mult,
 		result_out =>	EX_alu_out,
 		overflow => s_alu_overflow,
 		zero_out => s_alu_zero_out,
@@ -489,7 +474,7 @@ data_mem : mem
 			byteena	=> s_store_byteena,
 			clock	=>clk,
 			data	=>s_store_data,
-			wren	=>s_mem_write,
+			wren	=>EX_MEM_controller(8),       --s_write
 			q	=> MEM_data_mem_out); 
 
 MEM_WB_reg: MEM_WB_register
@@ -531,7 +516,7 @@ alu_out_lw_write_data_register : mux_21_n
 link_address : mux_21_n
 	port MAP(
 		i_X  =>s_write_data,
-		i_Y =>s_link_address,
+		i_Y =>MEM_WB_branch_logic,
 		s_1 =>MEM_WB_controller(1),			--load_is_and_link
 		o_Z => s_write_data_final);
 

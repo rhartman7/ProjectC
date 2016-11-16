@@ -117,8 +117,8 @@ branch_logic_reg: N_BitRegister
     i_CLK  => clk,
     i_RST => reset,
     i_WE => '1',
-    i_Input => EX_branch_logic,
-    o_Out => EX_MEM_branch_logic);
+    i_Input => ID_branch_logic,
+    o_Out => ID_EX_branch_logic);
 
 
 

@@ -100,5 +100,4 @@ branch_logic_reg: N_BitRegister
     i_Input => MEM_branch_logic,
     o_Out => MEM_WB_branch_logic);
 
-
 end structure;
