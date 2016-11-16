@@ -4,13 +4,13 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use work.all;
 
-entity MIPS_Processor_Project_B is
+entity MIPS_Processor_Project_C is
   	generic(N : integer := 32);
 	port(clk : in std_logic;
 		s_reset : in std_logic);
-end MIPS_Processor_Project_B;
+end MIPS_Processor_Project_C;
 
-architecture structure of MIPS_Processor_Project_B is 
+architecture structure of MIPS_Processor_Project_C is 
 
 component register_file
 	port(	i_reg1 : in std_logic_vector(4 downto 0); -- address of rs
@@ -249,7 +249,7 @@ alu_out_lw_write_data_register : mux_21_n
 		o_Z => s_write_data);
 
 -- MUX - choosed whether link address or load/alu_out
-link address : mux_21_n
+link_address : mux_21_n
 	port MAP(
 		i_X  =>s_write_data,
 		i_Y =>s_link_address,
