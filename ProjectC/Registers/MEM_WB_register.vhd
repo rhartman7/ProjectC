@@ -34,8 +34,8 @@ component N_BitRegister
   
 end component;
 
-component register_12_bit 
-  generic (N : integer := 12);
+component register_13_bit
+  generic (N : integer := 13);
   
   port(
     i_CLK        : in  std_logic;
@@ -46,8 +46,8 @@ component register_12_bit
   
 end component;
 
-component register_10_bit 
-  generic (N : integer := 10);
+component register_11_bit 
+  generic (N : integer := 11);
   
   port(
     i_CLK        : in  std_logic;
@@ -76,7 +76,7 @@ data_mem_out_reg : N_BitRegister
     i_Input => MEM_data_mem_out,
     o_Out => MEM_WB_data_mem_out);
 
-control_reg : Register_12_bit
+control_reg : Register_13_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
@@ -84,7 +84,7 @@ control_reg : Register_12_bit
     i_Input => MEM_controller,
     o_Out => MEM_WB_controller);
 
-alu_control_reg : register_10_bit
+alu_control_reg : register_11_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,

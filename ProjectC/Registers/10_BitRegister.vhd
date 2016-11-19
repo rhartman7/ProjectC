@@ -2,8 +2,8 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use work.all;
 
-entity register_10_bit is
-  generic (N : integer := 10);
+entity register_11_bit is
+  generic (N : integer := 11);
   
   port(
     i_CLK        : in  std_logic;
@@ -12,9 +12,9 @@ entity register_10_bit is
     i_Input      : in  std_logic_vector(N-1 downto 0);
     o_Out        : out std_logic_vector(N-1 downto 0));
   
-end register_10_bit;
+end register_11_bit;
 
-architecture structure of register_10_bit is
+architecture structure of register_11_bit is
   
   component dff
       port(
@@ -28,7 +28,7 @@ architecture structure of register_10_bit is
   
   begin
     
-    G1: for i in 0 to 31 generate
+    G1: for i in 0 to N-1 generate
       
       d_ff: dff
         port map(

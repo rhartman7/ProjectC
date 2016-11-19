@@ -28,7 +28,7 @@ architecture structure of register_13_bit is
   
   begin
     
-    G1: for i in 0 to N-1 generate
+    G1: for i in 0 to N generate
       
       d_ff: dff
         port map(
