@@ -248,7 +248,6 @@ signal s_store_byteena: std_logic_vector(3 downto 0);
 signal s_which_load : std_logic_vector(31 downto 0);
 --Signals for PC and Instruction Memory
 signal IF_instruction, IF_ID_instruction, ID_EX_instruction : std_logic_vector(31 downto 0);
-signal s_pc_current, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0);
 -- Signal for Immediate
 signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 --signals for ALU
@@ -257,9 +256,9 @@ signal s_alu_zero_out, s_alu_c_out,s_alu_overflow : std_logic;
 --signal for branch detection unit
 signal s_take_branch: std_logic;
 --signals for PC
-signal  IF_ID_PC,IF_PC, s_link_address : std_logic_vector(31 downto 0);
+signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0); 
 --brnach
-signal ID_branch_logic, ID_EX_branch_logic, EX_branch_logic, EX_MEM_branch_logic, MEM_branch_logic, MEM_WB_branch_logic  : std_logic_vector(31 downto 0);
+signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_logic  : std_logic_vector(31 downto 0);
 
 
 --CONTROL SIGNALS ALU
@@ -274,7 +273,7 @@ begin
 -- MUX - which pc value in used as pc current
 which_pc_value: mux_21_n
 	port MAP(
-		i_X  =>s_pc_current,
+		i_X  =>IF_PC,
 		i_Y =>s_new_PC_current,
 		s_1 =>s_take_branch,
 		o_Z => s_PC_value);
@@ -448,7 +447,7 @@ port MAP	(
 	EX_alu_controller	=>ID_EX_alu_controller,
 	EX_alu_out 		=>EX_alu_out,
 	EX_reg_out_2		=>ID_EX_reg_out_2,
-	EX_branch_logic		=>EX_branch_logic,
+	EX_branch_logic		=>ID_EX_branch_logic,
 	reset 			=>s_reset,
 	clk			=>clk,
     	EX_MEM_controller 	=>EX_MEM_controller,
@@ -484,7 +483,7 @@ MEM_WB_reg: MEM_WB_register
 	MEM_alu_controller	=>EX_MEM_alu_controller,
 	MEM_alu_out 		=>EX_MEM_alu_out,
 	MEM_data_mem_out	=>MEM_data_mem_out,
-	MEM_branch_logic	=>MEM_branch_logic, 
+	MEM_branch_logic	=>EX_MEM_branch_logic, 
 	reset 		=>s_reset,
 	clk		=>clk,
     	MEM_WB_controller 	=>MEM_WB_controller ,
