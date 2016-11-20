@@ -189,7 +189,7 @@ component ID_EX_register
 	ID_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	ID_EX_controller 	: out std_logic_vector(12 downto 0);
+ 	ID_EX_controller 	: out std_logic_vector(12 downto 0);
 	ID_EX_alu_controller	: out std_logic_vector(10 downto 0);
 	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
 	ID_EX_reg_out_2		: out std_logic_vector(31 downto 0);
@@ -209,33 +209,34 @@ component EX_MEM_register
 	EX_alu_out 	: in std_logic_vector(31 downto 0);
 	EX_reg_out_2	: in std_logic_vector(31 downto 0);
 	EX_branch_logic	: in std_logic_vector(31 downto 0);
+	EX_reg_write	: in std_logic_vector(4 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
     	EX_MEM_controller 	: out std_logic_vector(12 downto 0);
 	EX_MEM_alu_controller	: out std_logic_vector(10 downto 0);
 	EX_MEM_alu_out	 	: out std_logic_vector(31 downto 0);
 	EX_MEM_reg_out_2	: out std_logic_vector(31 downto 0);
-	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0));
-  
+	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0);
+	EX_MEM_reg_write	: out std_logic_vector(4 downto 0));  
 end component;
 
 component MEM_WB_register 
   generic (N : integer := 32);
-  
   port(
    	MEM_controller 		: in std_logic_vector(12 downto 0);
 	MEM_alu_controller	: in std_logic_vector(10 downto 0);
 	MEM_alu_out 		: in std_logic_vector(31 downto 0);
 	MEM_data_mem_out	: in std_logic_vector(31 downto 0);
 	MEM_branch_logic	: in std_logic_vector(31 downto 0);
+	MEM_reg_write		: in std_logic_vector(4 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
     	MEM_WB_controller 	: out std_logic_vector(12 downto 0);
 	MEM_WB_alu_controller	: out std_logic_vector(10 downto 0);
 	MEM_WB_alu_out	 	: out std_logic_vector(31 downto 0);
 	MEM_WB_data_mem_out	: out std_logic_vector(31 downto 0);
-	MEM_WB_branch_logic	: out std_logic_vector(31 downto 0));
-  
+	MEM_WB_branch_logic	: out std_logic_vector(31 downto 0);
+	MEM_WB_reg_write	: out std_logic_vector(4 downto 0));  
 end component;
 
 --Signals for register file
@@ -248,6 +249,8 @@ signal s_store_byteena: std_logic_vector(3 downto 0);
 signal s_which_load : std_logic_vector(31 downto 0);
 --Signals for PC and Instruction Memory
 signal IF_instruction, IF_ID_instruction, ID_EX_instruction : std_logic_vector(31 downto 0);
+--register write
+signal EX_MEM_reg_write, MEM_WB_reg_write : std_logic_vector(4 downto 0);
 -- Signal for Immediate
 signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 --signals for ALU
@@ -332,30 +335,13 @@ control : controller
 		in_branch_code => IF_ID_instruction(20 downto 16),
 		out_control => ID_controller);
 
- -- MUX - chooses rd or rt as the write register
-rd_rt_write_register : mux_21_5_bit
-	port MAP(
-		i_X  =>IF_ID_instruction(15 downto 11),
-		i_Y =>IF_ID_instruction(20 downto 16),
-		s_1 =>MEM_WB_controller(11),		--load_rd_rt
-		o_Z => s_write_address);
-
--- MUX - choosed whether write to register 31 or not
-reg_write_address : mux_21_5_bit
-	port MAP(
-		i_X  =>s_write_address,
-		i_Y => "11111",
-		s_1 =>MEM_WB_controller(1),			--load_is_and_link
-		o_Z => s_write_address_final);
-
-
 --register file
 reg_file : register_file  
 port MAP (	
 		i_reg1  => IF_ID_instruction(25 downto 21),
 		i_reg2  => IF_ID_instruction(20 downto 16), 
 		i_data => s_write_data_final,
-		i_writereg  => s_write_address_final, 
+		i_writereg  =>MEM_WB_reg_write, 
 		i_WE  => MEM_WB_controller(12),		--s_reg_write, 
 		i_CLK  => clk,
 		i_RST => s_reset,
@@ -440,6 +426,23 @@ alu_mult_shifter : alu_mult_shift
 		zero_out => s_alu_zero_out,
 		c_out 	=> s_alu_c_out);
 
+ -- MUX - chooses rd or rt as the write register
+rd_rt_write_register : mux_21_5_bit
+	port MAP(
+		i_X  =>ID_EX_instruction(15 downto 11),
+		i_Y =>ID_EX_instruction(20 downto 16),
+		s_1 =>ID_EX_controller(11),		--load_rd_rt
+		o_Z => s_write_address);
+
+-- MUX - choosed whether write to register 31 or not
+reg_write_address : mux_21_5_bit
+	port MAP(
+		i_X  =>s_write_address,
+		i_Y => "11111",
+		s_1 =>ID_EX_controller(1),			--load_is_and_link
+		o_Z => s_write_address_final);
+
+
 
 Ex_MEM_Reg: EX_MEM_register
 port MAP	(
@@ -448,13 +451,15 @@ port MAP	(
 	EX_alu_out 		=>EX_alu_out,
 	EX_reg_out_2		=>ID_EX_reg_out_2,
 	EX_branch_logic		=>ID_EX_branch_logic,
+	EX_reg_write		=>s_write_address_final,
 	reset 			=>s_reset,
 	clk			=>clk,
     	EX_MEM_controller 	=>EX_MEM_controller,
 	EX_MEM_alu_controller	=>EX_MEM_alu_controller,
 	EX_MEM_alu_out	 	=>EX_MEM_alu_out,
 	EX_MEM_reg_out_2	=>EX_MEM_reg_out_2,
-	EX_MEM_branch_logic	=>EX_MEM_branch_logic);
+	EX_MEM_branch_logic	=>EX_MEM_branch_logic,
+	EX_MEM_reg_write	=>EX_MEM_reg_write);
 
 
  --store component
@@ -484,13 +489,15 @@ MEM_WB_reg: MEM_WB_register
 	MEM_alu_out 		=>EX_MEM_alu_out,
 	MEM_data_mem_out	=>MEM_data_mem_out,
 	MEM_branch_logic	=>EX_MEM_branch_logic, 
+	MEM_reg_write		=>EX_MEM_reg_write,
 	reset 		=>s_reset,
 	clk		=>clk,
     	MEM_WB_controller 	=>MEM_WB_controller ,
 	MEM_WB_alu_controller	=>MEM_WB_alu_controller ,
 	MEM_WB_alu_out	 	=>MEM_WB_alu_out,
 	MEM_WB_data_mem_out	=>MEM_WB_data_mem_out,
-	MEM_WB_branch_logic	=> MEM_WB_branch_logic);
+	MEM_WB_branch_logic	=>MEM_WB_branch_logic,
+	MEM_WB_reg_write	=>MEM_WB_reg_write);
 
 
 --load component
@@ -518,11 +525,6 @@ link_address : mux_21_n
 		i_Y =>MEM_WB_branch_logic,
 		s_1 =>MEM_WB_controller(1),			--load_is_and_link
 		o_Z => s_write_data_final);
-
-
-
-
-
 
 
 

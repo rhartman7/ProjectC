@@ -523,21 +523,21 @@ R70
 R11
 R12
 Eex_mem_register
+Z71 w1479602801
 R1
 R2
-32
-Z71 !s110 1479574592
-!i10b 1
-Z72 w1479574290
 R0
-Z73 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/EX_MEM_register.vhd
-Z74 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/EX_MEM_register.vhd
+Z72 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/EX_MEM_register.vhd
+Z73 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/EX_MEM_register.vhd
 l0
 L5
-V4cOjBHX1=MNk1gGDIl_7h3
-!s100 ?LJAmVQ]J3c]U=__M7^::3
+V0iM:D^Cc22DBIF;lZ]O`A1
+!s100 o^ag;BX7Y:_BK42m5NefE2
 R7
-Z75 !s108 1479574592.000000
+32
+Z74 !s110 1479602807
+!i10b 1
+Z75 !s108 1479602807.000000
 Z76 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/EX_MEM_register.vhd|
 Z77 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/EX_MEM_register.vhd|
 !i113 1
@@ -546,15 +546,15 @@ R12
 Astructure
 R1
 R2
-DEx4 work 15 ex_mem_register 0 22 4cOjBHX1=MNk1gGDIl_7h3
-32
-R71
-!i10b 1
-l61
-L24
-VbXBSQzfN81g1Qa^ACPzGL2
-!s100 ?a1^U[2mM[PD0hg1ejS]f2
+DEx4 work 15 ex_mem_register 0 22 0iM:D^Cc22DBIF;lZ]O`A1
+l76
+L26
+VJRHVoB`]iSLjV>EH<SQoj2
+!s100 E@jzmAW`K;iCz]e1`6`gR3
 R7
+32
+R74
+!i10b 1
 R75
 R76
 R77
@@ -679,20 +679,20 @@ R90
 R11
 R12
 Eid_ex_register
+Z91 w1479602699
 R1
 R2
-32
-R71
-!i10b 1
-Z91 w1479574348
 R0
 Z92 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/ID_EX_register.vhd
 Z93 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/ID_EX_register.vhd
 l0
 L5
-VG1`8E6mW1e6WVk`2@OOjf2
-!s100 Ba7L]bJAYKY[[3_Vom3;n1
+V9n68aLd;4?PzTm[@U@Jeb1
+!s100 DQQD[1W3eJH<[Ef<Xmnb?0
 R7
+32
+R74
+!i10b 1
 R75
 Z94 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/ID_EX_register.vhd|
 Z95 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/ID_EX_register.vhd|
@@ -702,15 +702,15 @@ R12
 Astructure
 R1
 R2
-DEx4 work 14 id_ex_register 0 22 G1`8E6mW1e6WVk`2@OOjf2
-32
-R71
-!i10b 1
-l65
-L28
-VUH_>QR@;4]g81M4ZDbQW]0
-!s100 d2aWgoUz[4=kVBn1nc25<3
+DEx4 work 14 id_ex_register 0 22 9n68aLd;4?PzTm[@U@Jeb1
+l66
+L29
+VC<n6H^5ZW77URUVz9_GhV2
+!s100 l9SeJj5Tg=013jIH;Um052
 R7
+32
+R74
+!i10b 1
 R75
 R94
 R95
@@ -718,12 +718,9 @@ R95
 R11
 R12
 Eif_id_register
+R4
 R1
 R2
-32
-R71
-!i10b 1
-R4
 R0
 Z96 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/IF_ID_register.vhd
 Z97 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/IF_ID_register.vhd
@@ -732,6 +729,9 @@ L5
 V84i<Uo0A2M<V5R>`Zk@_83
 !s100 UeMQbcQn7ZVK^T8R==SQm2
 R7
+32
+R74
+!i10b 1
 R75
 Z98 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/IF_ID_register.vhd|
 Z99 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/IF_ID_register.vhd|
@@ -742,14 +742,14 @@ Astructure
 R1
 R2
 DEx4 work 14 if_id_register 0 22 84i<Uo0A2M<V5R>`Zk@_83
-32
-R71
-!i10b 1
 l31
 L18
 VLL02N]cZKHkb?B^PQUaz>2
 !s100 06c^jG:_?9PMY8cg_KJH43
 R7
+32
+R74
+!i10b 1
 R75
 R98
 R99
@@ -960,20 +960,20 @@ R123
 R11
 R12
 Emem_wb_register
+Z124 w1479602787
 R1
 R2
-32
-R71
-!i10b 1
-Z124 w1479574313
 R0
 Z125 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/MEM_WB_register.vhd
 Z126 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/MEM_WB_register.vhd
 l0
 L5
-VEJdZeOcX3QVD`b`PQlY8Y0
-!s100 :da>KKB7F5o<EdFi<WP2D1
+V_4>T4NI0OZbe@oIF5a:Di3
+!s100 =SNLO9B=MTjRPZfK@KPAT1
 R7
+32
+R74
+!i10b 1
 R75
 Z127 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/MEM_WB_register.vhd|
 Z128 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/MEM_WB_register.vhd|
@@ -983,15 +983,15 @@ R12
 Astructure
 R1
 R2
-DEx4 work 15 mem_wb_register 0 22 EJdZeOcX3QVD`b`PQlY8Y0
-32
-R71
-!i10b 1
-l61
-L24
-VBjBoCK3nzjdX:^l22n;hl1
-!s100 ]J>Yna<11lGg9z?8Di?RV1
+DEx4 work 15 mem_wb_register 0 22 _4>T4NI0OZbe@oIF5a:Di3
+l75
+L26
+Vc[`9Ma6]`aCoIcNY1^baE2
+!s100 mnK8TYI697XA^];^9=ES<0
 R7
+32
+R74
+!i10b 1
 R75
 R127
 R128
@@ -999,7 +999,7 @@ R128
 R11
 R12
 Emips_processor_project_c
-Z129 w1479597481
+Z129 w1479603082
 R44
 R1
 R2
@@ -1012,9 +1012,9 @@ VfIM9]JY=cd;CkNUD1Ig7B1
 !s100 Z3g9cL;oRX3I8<DcY:<2W0
 R7
 32
-Z132 !s110 1479597491
+Z132 !s110 1479603086
 !i10b 1
-Z133 !s108 1479597491.000000
+Z133 !s108 1479603085.000000
 Z134 !s90 -reportprogress|300|-work|work|-O0|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/MIPS_Processor_Project_C.vhd|
 Z135 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/MIPS_Processor_Project_C.vhd|
 !i113 1
@@ -1025,10 +1025,10 @@ R44
 R1
 R2
 Z136 DEx4 work 24 mips_processor_project_c 0 22 fIM9]JY=cd;CkNUD1Ig7B1
-l270
+l273
 L13
-VY`C>biYzkoRFdVLM]H_lh2
-!s100 oz1A>N3EaJ>Jod]Z2nPn:3
+VC8mJLm6cBQYa?GnanI`d>2
+!s100 ZMFABX??XOEN7E`TD9^l@1
 R7
 32
 R132
@@ -1869,12 +1869,9 @@ R228
 R11
 R12
 Eregister_11_bit
+Z229 w1479574587
 R1
 R2
-32
-Z229 !s110 1479574591
-!i10b 1
-Z230 w1479574587
 R0
 R224
 R225
@@ -1883,7 +1880,10 @@ L5
 V3XG@5>;LgSVn5V;Qb=_1O3
 !s100 =;OmaFAzoBc_1AVgFg_2G2
 R7
-Z231 !s108 1479574591.000000
+32
+Z230 !s110 1479602806
+!i10b 1
+Z231 !s108 1479602806.000000
 R227
 R228
 !i113 1
@@ -1893,14 +1893,14 @@ Astructure
 R1
 R2
 DEx4 work 15 register_11_bit 0 22 3XG@5>;LgSVn5V;Qb=_1O3
-32
-R229
-!i10b 1
 l29
 L17
 VQ:NXJMFVl^^=D1[fHb>]N1
 !s100 WlGeHEUGz<32bzFdSfY9Q2
 R7
+32
+R230
+!i10b 1
 R231
 R227
 R228
@@ -1947,12 +1947,9 @@ R235
 R11
 R12
 Eregister_13_bit
+Z236 w1479574583
 R1
 R2
-32
-R71
-!i10b 1
-Z236 w1479574583
 R0
 R232
 R233
@@ -1961,6 +1958,9 @@ L5
 V6Zi`hSJl`V6d>c:`f?Ci80
 !s100 iE8SKKGYIF?6M3<]c`DJS2
 R7
+32
+R74
+!i10b 1
 R75
 R234
 R235
@@ -1971,17 +1971,56 @@ Astructure
 R1
 R2
 DEx4 work 15 register_13_bit 0 22 6Zi`hSJl`V6d>c:`f?Ci80
-32
-R71
-!i10b 1
 l29
 L17
 V:QXdMCR>zgePzJGObd_]K1
 !s100 Vb?nfbQJ0RQH`C^W_o;lh3
 R7
+32
+R74
+!i10b 1
 R75
 R234
 R235
+!i113 1
+R11
+R12
+Eregister_5_bit
+Z237 w1479602282
+R1
+R2
+R0
+Z238 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/5_BitRegister.vhd
+Z239 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/5_BitRegister.vhd
+l0
+L5
+VgD]iWLDS98FIVdBh:ca]m2
+!s100 =eNjf<Je5Y75Kol4Sj82X0
+R7
+32
+R230
+!i10b 1
+R231
+Z240 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/5_BitRegister.vhd|
+Z241 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Registers/5_BitRegister.vhd|
+!i113 1
+R11
+R12
+Astructure
+R1
+R2
+DEx4 work 14 register_5_bit 0 22 gD]iWLDS98FIVdBh:ca]m2
+l29
+L17
+V4HXVYhCf[Zb?_NfD??7aM1
+!s100 IhhTZ829C7DZgQLi5AdJd3
+R7
+32
+R230
+!i10b 1
+R231
+R240
+R241
 !i113 1
 R11
 R12
@@ -1990,20 +2029,20 @@ R164
 R1
 R2
 32
-Z237 !s110 1479572977
+Z242 !s110 1479572977
 !i10b 1
 R4
 R0
-Z238 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd
-Z239 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd
+Z243 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd
+Z244 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd
 l0
 L9
 Von5LV>O`;lcXI__<R5kbf1
 !s100 BBEEdRY]O>IzGH9R<bPjS2
 R7
-Z240 !s108 1479572977.000000
-Z241 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd|
-Z242 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd|
+Z245 !s108 1479572977.000000
+Z246 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd|
+Z247 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/register file/register_file.vhd|
 !i113 1
 R11
 R12
@@ -2013,16 +2052,16 @@ R1
 R2
 DEx4 work 13 register_file 0 22 on5LV>O`;lcXI__<R5kbf1
 32
-R237
+R242
 !i10b 1
 l54
 L21
 VWbhPlHWCdFhfN9M4>9_fb0
 !s100 <POicQPPnmW;`88NE>FO13
 R7
-R240
-R241
-R242
+R245
+R246
+R247
 !i113 1
 R11
 R12
@@ -2034,16 +2073,16 @@ R45
 !i10b 1
 R4
 R0
-Z243 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd
-Z244 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd
+Z248 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd
+Z249 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd
 l0
 L5
 VcX5o8HPoI^2zLzFQ7e1hX3
 !s100 o>P55H=R1bFTO_VLZLE^g2
 R7
 R48
-Z245 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd|
-Z246 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd|
+Z250 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd|
+Z251 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Branch Dectection/SixteenTo32Extender.vhd|
 !i113 1
 R11
 R12
@@ -2060,8 +2099,8 @@ VMo?=ET?TTfJNDZ@<@OML:1
 !s100 ^]bbZ^z>1K>e2@=R4FObc3
 R7
 R48
-R245
-R246
+R250
+R251
 !i113 1
 R11
 R12
@@ -2073,16 +2112,16 @@ R118
 !i10b 1
 R4
 R0
-Z247 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd
-Z248 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd
+Z252 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd
+Z253 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd
 l0
 L5
 VQ[d2jP<eGXdJZSdA2YG]O2
 !s100 ZgfT;[0]Ln7F7bgllTAbB1
 R7
 R121
-Z249 !s90 -reportprogress|30|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd|
-Z250 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd|
+Z254 !s90 -reportprogress|30|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd|
+Z255 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/store.vhd|
 !i113 1
 R11
 R12
@@ -2099,8 +2138,8 @@ VTn`<oPHE?^i:2VE==b31G0
 !s100 IUf6L4WhUYMaFeTi<J^az2
 R7
 R121
-R249
-R250
+R254
+R255
 !i113 1
 R11
 R12
@@ -2112,16 +2151,16 @@ R197
 !i10b 1
 R4
 R0
-Z251 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd
-Z252 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd
+Z256 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd
+Z257 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd
 l0
 L6
 V9mQ2bk_zKnFcn7T=gK8VL0
 !s100 18[8TzjzSHjKCLC=LETeQ2
 R7
 R212
-Z253 !s90 -reportprogress|30|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd|
-Z254 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd|
+Z258 !s90 -reportprogress|30|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd|
+Z259 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/32_bit_alu/tb_alu_32.vhd|
 !i113 1
 R11
 R12
@@ -2138,8 +2177,8 @@ V;ez1JRBOn<0zd9H`UW19l0
 !s100 zQ]HH4`jA_7;VMDUZ];X>0
 R7
 R212
-R253
-R254
+R258
+R259
 !i113 1
 R11
 R12
@@ -2147,20 +2186,20 @@ Etb_barrel_shift_32
 R1
 R2
 32
-Z255 !s110 1479572956
+Z260 !s110 1479572956
 !i10b 1
 R4
 R0
-Z256 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd
-Z257 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd
+Z261 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd
+Z262 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd
 l0
 L6
 V3XZfZ:Xci:_G3Q7IEzGDU3
 !s100 aDVoXjK6BoY2CWWdelZcA2
 R7
-Z258 !s108 1479572956.000000
-Z259 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd|
-Z260 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd|
+Z263 !s108 1479572956.000000
+Z264 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd|
+Z265 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Barrell_Shifter/tb_barrel_shifter_32.vhd|
 !i113 1
 R11
 R12
@@ -2169,16 +2208,16 @@ R1
 R2
 DEx4 work 18 tb_barrel_shift_32 0 22 3XZfZ:Xci:_G3Q7IEzGDU3
 32
-R255
+R260
 !i10b 1
 l33
 L9
 V>clD:4G74I3Nj6NK1^CHG1
 !s100 NoFhz1?oYVP[[W6jPCn9>0
 R7
-R258
-R259
-R260
+R263
+R264
+R265
 !i113 1
 R11
 R12
@@ -2190,16 +2229,16 @@ R30
 !i10b 1
 R4
 R0
-Z261 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd
-Z262 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd
+Z266 8C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd
+Z267 FC:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd
 l0
 L21
 VbRPaE?>aAFPCRmj4M2UGz3
 !s100 Xzj6]5oj?J7SidNfGheVE1
 R7
 R31
-Z263 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd|
-Z264 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd|
+Z268 !s90 -reportprogress|300|-work|work|C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd|
+Z269 !s107 C:/Users/rhart_000/Documents/CPRE 381/ProjectC/ProjectC/Processor/Multiplier/xor2.vhd|
 !i113 1
 R11
 R12
@@ -2216,8 +2255,8 @@ Vi1zchBN==FY;XlJh<f>VW3
 !s100 LXE;@`Xg51R;EL>eI@ge21
 R7
 R31
-R263
-R264
+R268
+R269
 !i113 1
 R11
 R12

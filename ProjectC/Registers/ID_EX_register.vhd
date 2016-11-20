@@ -23,6 +23,7 @@ entity ID_EX_register is
 	ID_EX_instruction	: out std_logic_vector(31 downto 0);
 	ID_EX_branch_logic	: out std_logic_vector(31 downto 0));
   
+  
 end ID_EX_register;
 
 architecture structure of ID_EX_register is
@@ -119,10 +120,5 @@ branch_logic_reg: N_BitRegister
     i_WE => '1',
     i_Input => ID_branch_logic,
     o_Out => ID_EX_branch_logic);
-
-
-
-
-
 
 end structure;

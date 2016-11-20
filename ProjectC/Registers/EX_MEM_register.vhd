@@ -11,13 +11,15 @@ entity EX_MEM_register is
 	EX_alu_out 	: in std_logic_vector(31 downto 0);
 	EX_reg_out_2	: in std_logic_vector(31 downto 0);
 	EX_branch_logic	: in std_logic_vector(31 downto 0);
+	EX_reg_write	: in std_logic_vector(4 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
     	EX_MEM_controller 	: out std_logic_vector(12 downto 0);
 	EX_MEM_alu_controller	: out std_logic_vector(10 downto 0);
 	EX_MEM_alu_out	 	: out std_logic_vector(31 downto 0);
 	EX_MEM_reg_out_2	: out std_logic_vector(31 downto 0);
-	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0));
+	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0);
+	EX_MEM_reg_write	: out std_logic_vector(4 downto 0));
   
 end EX_MEM_register;
 
@@ -57,6 +59,19 @@ component register_11_bit
     o_Out        : out std_logic_vector(N-1 downto 0));
   
 end component;
+
+component register_5_bit
+  generic (N : integer := 5);
+  
+  port(
+    i_CLK        : in  std_logic;
+    i_RST        : in  std_logic;
+    i_WE         : in  std_logic;
+    i_Input      : in  std_logic_vector(N-1 downto 0);
+    o_Out        : out std_logic_vector(N-1 downto 0));
+  
+end component;
+
   
   begin
     
@@ -99,6 +114,14 @@ branch_logic_reg: N_BitRegister
     i_WE => '1',
     i_Input => EX_branch_logic,
     o_Out => EX_MEM_branch_logic);
+
+reg_write_ex_mem: register_5_bit
+  port MAP(
+    i_CLK  => clk,
+    i_RST => reset,
+    i_WE => '1',
+    i_Input => EX_reg_write,
+    o_Out => EX_MEM_reg_write);
 
 
 
