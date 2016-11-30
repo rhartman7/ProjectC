@@ -12,6 +12,51 @@ end MIPS_Processor_Project_C;
 
 architecture structure of MIPS_Processor_Project_C is 
 --General components
+
+component forwarding is
+  port(
+    ex_mem_RegWen       : in  std_logic;                          -- WrEn EX/MEM
+    mem_wb_RegWen       : in  std_logic;                          -- WrEn MEM/WB
+    id_ex_RegRs         : in  std_logic_vector(4 downto 0);       -- Address of rs ID/EX
+    id_ex_RegRt         : in  std_logic_vector(4 downto 0);       -- Address of rt ID/EX
+    ex_mem_RegRd        : in  std_logic_vector(4 downto 0);       -- Address of rd EX/MEM
+    mem_wb_RegRd        : in  std_logic_vector(4 downto 0);       -- Address of rd MEM/WB
+    ex_mem_RegRt        : in  std_logic_vector(4 downto 0);       -- Address of rt EX/MEM
+    ex_mem_RegRs         : in  std_logic_vector(4 downto 0);       -- Address of rs EX/MEM
+    mem_wb_RegRt        : in  std_logic_vector(4 downto 0);       -- Address pf rt MEM/WB
+    is_Link             : in  std_logic;
+
+    
+    forwardA            : out std_logic_vector(2 downto 0);       -- when 000, first ALU operand from reg file
+                                                                  -- when 001, first ALU operand forwarded from prior ALU result
+                                                                  -- when 010, first ALU operand forwarded from DMEM or earlier ALU result
+                                                                  -- when 011, Load hazard
+                                                                  -- when 100, I-type instruction
+                                                                  -- when 101, I-type 2 instructions later
+    
+    forwardB            : out std_logic_vector(2 downto 0));      -- when 000, second ALU operand from reg file
+                                                                  -- when 001, second ALU operand forwarded from prior ALU result
+                                                                  -- when 010, second ALU operand forwarded from DMEM or earlier ALU result
+                                                                  -- when 011, Load hazard
+                                                                  -- when 100, I-type instruction
+                                                                  -- when 101, I-type 2 instructions later
+end component;
+
+component Eightto1Mux is
+  port(
+    input_0        :       in  std_logic_vector(31 downto 0);
+    input_1       :        in  std_logic_vector(31 downto 0);
+    input_2        :       in  std_logic_vector(31 downto 0);
+    input_3        :       in  std_logic_vector(31 downto 0);
+    input_4        :       in  std_logic_vector(31 downto 0);
+    input_5        :       in  std_logic_vector(31 downto 0);
+    input_6        :       in  std_logic_vector(31 downto 0);
+    input_7        :       in  std_logic_vector(31 downto 0);
+    sel3         :       in  std_logic_vector(2 downto 0);
+    output       :       out std_logic_vector(31 downto 0));
+    
+end component;
+
 component register_file
 	port(	i_reg1 : in std_logic_vector(4 downto 0); -- address of rs
 		i_reg2 : in std_logic_vector(4 downto 0); -- address of rt
@@ -204,43 +249,51 @@ component EX_MEM_register
   generic (N : integer := 32);
   
   port(
+    EX_instruction : in std_logic_vector(31 downto 0);
    	EX_controller 	: in std_logic_vector(12 downto 0);
 	EX_alu_controller: in std_logic_vector(10 downto 0);
 	EX_alu_out 	: in std_logic_vector(31 downto 0);
 	EX_reg_out_2	: in std_logic_vector(31 downto 0);
 	EX_branch_logic	: in std_logic_vector(31 downto 0);
 	EX_reg_write	: in std_logic_vector(4 downto 0);
+	EX_reg_out_1 : std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
+	EX_MEM_instruction : out std_logic_vector(31 downto 0);
     	EX_MEM_controller 	: out std_logic_vector(12 downto 0);
 	EX_MEM_alu_controller	: out std_logic_vector(10 downto 0);
 	EX_MEM_alu_out	 	: out std_logic_vector(31 downto 0);
 	EX_MEM_reg_out_2	: out std_logic_vector(31 downto 0);
+	EX_MEM_reg_out_1 : out std_logic_vector(31 downto 0);
 	EX_MEM_branch_logic	: out std_logic_vector(31 downto 0);
-	EX_MEM_reg_write	: in std_logic_vector(4 downto 0));  
+	EX_MEM_reg_write	: out std_logic_vector(4 downto 0));
 end component;
 
 component MEM_WB_register 
   generic (N : integer := 32);
   port(
+    MEM_instruction : in std_logic_vector(31 downto 0);
    	MEM_controller 		: in std_logic_vector(12 downto 0);
 	MEM_alu_controller	: in std_logic_vector(10 downto 0);
 	MEM_alu_out 		: in std_logic_vector(31 downto 0);
 	MEM_data_mem_out	: in std_logic_vector(31 downto 0);
 	MEM_branch_logic	: in std_logic_vector(31 downto 0);
 	MEM_reg_write		: in std_logic_vector(4 downto 0);
+	MEM_reg_out_2 : in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
+	MEM_WB_instruction : out std_logic_vector(31 downto 0);
+	MEM_WB_reg_out_2 : out std_logic_vector(31 downto 0);
     	MEM_WB_controller 	: out std_logic_vector(12 downto 0);
 	MEM_WB_alu_controller	: out std_logic_vector(10 downto 0);
 	MEM_WB_alu_out	 	: out std_logic_vector(31 downto 0);
 	MEM_WB_data_mem_out	: out std_logic_vector(31 downto 0);
 	MEM_WB_branch_logic	: out std_logic_vector(31 downto 0);
-	MEM_WB_reg_write	: in std_logic_vector(4 downto 0));  
+	MEM_WB_reg_write	: out std_logic_vector(4 downto 0));
 end component;
 
 --Signals for register file
-signal s_write_data, ID_reg_out_1, ID_reg_out_2, ID_EX_reg_out_1, ID_EX_reg_out_2, EX_MEM_reg_out_2: std_logic_vector(31 downto 0);
+signal s_write_data, ID_reg_out_1, ID_reg_out_2, ID_EX_reg_out_1, ID_EX_reg_out_2, EX_MEM_reg_out_2, EX_MEM_reg_out_1, MEM_WB_reg_out_2: std_logic_vector(31 downto 0);
 signal s_write_address, s_write_address_final : std_logic_vector(4 downto 0);
 --Signals for Data Memory
 signal  MEM_data_mem_out, s_store_data, MEM_WB_data_mem_out: std_logic_vector(31 downto 0);
@@ -248,13 +301,13 @@ signal s_store_byteena: std_logic_vector(3 downto 0);
 --Signals for Load
 signal s_which_load : std_logic_vector(31 downto 0);
 --Signals for PC and Instruction Memory
-signal IF_instruction, IF_ID_instruction, ID_EX_instruction : std_logic_vector(31 downto 0);
+signal IF_instruction, IF_ID_instruction, ID_EX_instruction, EX_MEM_instruction, MEM_WB_instruction: std_logic_vector(31 downto 0);
 --register write
 signal EX_MEM_reg_write, MEM_WB_reg_write : std_logic_vector(4 downto 0);
 -- Signal for Immediate
 signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 --signals for ALU
-signal EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out,  s_write_data_final, s_input_2_alu : std_logic_vector(31 downto 0);
+signal EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out,  s_write_data_final, s_input_2_alu, s_ForwardA_out, s_ForwardB_out : std_logic_vector(31 downto 0);
 signal s_alu_zero_out, s_alu_c_out,s_alu_overflow : std_logic;
 --signal for branch detection unit
 signal s_take_branch: std_logic;
@@ -262,6 +315,8 @@ signal s_take_branch: std_logic;
 signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0); 
 --brnach
 signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_logic  : std_logic_vector(31 downto 0);
+-- forwarding signals
+signal s_forwardA, s_forwardB     : std_logic_vector(2 downto 0);
 
 
 --CONTROL SIGNALS ALU
@@ -378,7 +433,6 @@ branch_detection: branch_detection_Unit
     take_Branch => s_take_branch);
 
 
-
 ID_EX_reg: ID_EX_register 
   port MAP(
  	ID_controller=>ID_controller,
@@ -398,6 +452,27 @@ ID_EX_reg: ID_EX_register
 	ID_EX_instruction=>ID_EX_instruction,
 	ID_EX_branch_logic=>ID_EX_branch_logic);
 
+forward_logic: forwarding
+  port MAP(
+    ex_mem_RegWen       => EX_MEM_controller(12),                          -- WrEn EX/MEM
+    mem_wb_RegWen       => MEM_WB_controller(12),                        -- WrEn MEM/WB
+    id_ex_RegRs         => ID_EX_instruction(25 downto 21),                              -- Address of rs ID/EX
+    id_ex_RegRt         => ID_EX_instruction(20 downto 16),                             -- Address of rt ID/EX
+    ex_mem_RegRd        => EX_MEM_instruction(15 downto 11),      -- Address of rd EX/MEM
+    mem_wb_RegRd        => MEM_WB_instruction(15 downto 11),      -- Address of rd MEM/WB
+    ex_mem_RegRt        => EX_MEM_instruction(20 downto 16),
+    ex_mem_RegRs        => EX_MEM_instruction(25 downto 21),
+    mem_wb_RegRt        => MEM_WB_instruction(20 downto 16),
+    is_Link             => EX_MEM_controller(1),
+
+    
+    forwardA            => s_ForwardA,                            -- when 00, first ALU operand from reg file
+                                                                  -- when 10, first ALU operand forwarded from prior ALU result
+                                                                  -- when 01, first ALU operand forwarded from DMEM or earlier ALU result
+    
+    forwardB            => s_forwardB);                           -- when 00, second ALU operand from reg file
+                                                                  -- when 10, second ALU operand forwarded from prior ALU result
+                                                                  -- when 01, second ALU operand forwarded from DMEM or earlier ALU result
 
 --MUX - chooses whether the immediate value or regist file output goes into the ALU
 o_reg2_immediate_alu_in : mux_21_n
@@ -406,13 +481,43 @@ o_reg2_immediate_alu_in : mux_21_n
 		i_Y =>ID_EX_immediate,
 		s_1 =>ID_EX_alu_controller(10),			--s_alu_src,
 		o_Z => s_input_2_alu);
+		
+-- ALU IN Mux A
+ALU_in_A: struct_mux81_32_bit
+  port MAP(
+    input_0        => ID_EX_reg_out_1,
+    input_1        => EX_alu_out,
+    input_2        => EX_MEM_alu_out,
+    input_3        => s_which_load,
+    input_4        => EX_alu_out,
+    input_5        => EX_MEM_alu_out,
+    input_6        => ID_branch_logic,
+    input_7        => x"00000000",
+    sel3           => s_ForwardA,
+    output         => s_ForwardA_out);
+    
+-- ALU IN Mux B
+ALU_in_B: struct_mux81_32_bit
+  port MAP(
+    input_0        => s_input_2_alu,
+    input_1        => EX_alu_out,
+    input_2        => EX_MEM_alu_out,
+    input_3        => s_which_load,
+    input_4        => EX_alu_out,
+    input_5        => EX_MEM_alu_out,
+    input_6        => ID_branch_logic,
+    input_7        => x"00000000",
+    sel3           => s_ForwardB,
+    output         => s_ForwardB_out);
+    
+
 
 
 -- ALU
 alu_mult_shifter : alu_mult_shift
 	port MAP (
-		a_in =>ID_EX_reg_out_1,
-		b_in => s_input_2_alu, 
+		a_in =>s_ForwardA_out,
+		b_in => s_ForwardB_out, 
 		op => ID_EX_alu_controller(9 downto 7),		--s_op,
 		add_sub => ID_EX_alu_controller(6),		--s_add_sub,
 		load_type => ID_EX_alu_controller(5),		--s_load_type,
@@ -446,18 +551,22 @@ reg_write_address : mux_21_5_bit
 
 Ex_MEM_Reg: EX_MEM_register
 port MAP	(
+  EX_instruction => ID_EX_instruction,
    	EX_controller 		=>ID_EX_controller,
 	EX_alu_controller	=>ID_EX_alu_controller,
 	EX_alu_out 		=>EX_alu_out,
 	EX_reg_out_2		=>ID_EX_reg_out_2,
 	EX_branch_logic		=>ID_EX_branch_logic,
 	EX_reg_write		=>s_write_address_final,
+	EX_reg_out_1 => ID_EX_reg_out_1,
 	reset 			=>s_reset,
 	clk			=>clk,
+	EX_MEM_instruction => EX_MEM_instruction,
     	EX_MEM_controller 	=>EX_MEM_controller,
 	EX_MEM_alu_controller	=>EX_MEM_alu_controller,
 	EX_MEM_alu_out	 	=>EX_MEM_alu_out,
 	EX_MEM_reg_out_2	=>EX_MEM_reg_out_2,
+	EX_MEM_reg_out_1 => EX_MEM_reg_out_1,
 	EX_MEM_branch_logic	=>EX_MEM_branch_logic,
 	EX_MEM_reg_write	=>EX_MEM_reg_write);
 
@@ -484,19 +593,23 @@ data_mem : mem
 MEM_WB_reg: MEM_WB_register
 
   port MAP(
+    MEM_instruction => EX_MEM_instruction,
    	MEM_controller 		=>EX_MEM_controller,
 	MEM_alu_controller	=>EX_MEM_alu_controller,
 	MEM_alu_out 		=>EX_MEM_alu_out,
 	MEM_data_mem_out	=>MEM_data_mem_out,
 	MEM_branch_logic	=>EX_MEM_branch_logic, 
 	MEM_reg_write		=>EX_MEM_reg_write,
+	MEM_reg_out_2 => EX_MEM_reg_out_2,
 	reset 		=>s_reset,
 	clk		=>clk,
+	MEM_WB_instruction => MEM_WB_instruction,
+	MEM_WB_reg_out_2 => MEM_WB_reg_out_2,
     	MEM_WB_controller 	=>MEM_WB_controller ,
 	MEM_WB_alu_controller	=>MEM_WB_alu_controller ,
 	MEM_WB_alu_out	 	=>MEM_WB_alu_out,
 	MEM_WB_data_mem_out	=>MEM_WB_data_mem_out,
-	MEM_WB_branch_logic	=> MEM_WB_branch_logic,
+	MEM_WB_branch_logic	=>MEM_WB_branch_logic,
 	MEM_WB_reg_write	=>MEM_WB_reg_write);
 
 
