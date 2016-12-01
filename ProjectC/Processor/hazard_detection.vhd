@@ -11,7 +11,7 @@ entity hazard_detection is
     take_Branch             : in std_logic;
     PC_Write                : out std_logic;
     if_id_write             : out std_logic;
-    id_ex_flush             : out std_logic;
+    id_ex_stall             : out std_logic;
     if_id_reset             : out std_logic);
     
 end hazard_detection;
@@ -24,7 +24,7 @@ begin
 
 PC_wren    = '1';
 if_id_wren = '1';
-id_ex_fl   = '1';
+id_ex_st   = '0';
 
 process
   begin
@@ -32,13 +32,15 @@ process
   if(id_ex_MemRead = '1') then
     if(id_ex_RegRt = if_id_RegRs) then
       if(id_ex_RegRt = if_id_RegRt) then
-        load_stall = '1';
+        id_ex_st = '1';
       end if;
     end if;
   end if;
   
   if(take_Branch = '1') then
-    
+    id_ex_st = '1';
+    PC_wren = '0';
+    if_id_wren = '0';
  
 wait for 100 ns;
 end process;

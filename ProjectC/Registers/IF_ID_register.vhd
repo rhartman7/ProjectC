@@ -9,6 +9,7 @@ entity IF_ID_register is
    	IF_instruction 	: in std_logic_vector(31 downto 0);
 	IF_pc		: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
+	wr_en   : in std_logic;
 	clk		: in std_logic;
     	IF_ID_instruction : out  std_logic_vector(31 downto 0);
    	IF_ID_pc        	: out std_logic_vector(31 downto 0));
@@ -34,7 +35,7 @@ instruction : N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => wr_en,
     i_Input => IF_instruction,
     o_Out => IF_ID_instruction);
 
@@ -42,7 +43,7 @@ PC : N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => wr_en,
     i_Input => IF_pc,
     o_Out => IF_ID_pc);
 

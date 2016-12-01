@@ -8,9 +8,11 @@ entity hazard_detection is
     id_ex_instruction       : in std_logic_vector(31 downto 0);
     if_id_instruction       : in std_logic_vector(31 downto 0);
     id_ex_controller        : in std_logic_vector(31 downto 0);
+    take_Branch             : in std_logic;
     PC_Write                : out std_logic;
     if_id_write             : out std_logic;
-    id_ex_flush             : out std_logic);
+    id_ex_flush             : out std_logic;
+    if_id_reset             : out std_logic);
     
 end hazard_detection;
 
@@ -34,6 +36,9 @@ process
       end if;
     end if;
   end if;
+  
+  if(take_Branch = '1') then
+    
  
 wait for 100 ns;
 end process;

@@ -7,12 +7,13 @@ entity forwarding is
   port(
     ex_mem_RegWen       : in  std_logic;                          -- WrEn EX/MEM
     mem_wb_RegWen       : in  std_logic;                          -- WrEn MEM/WB
+    id_ex_instruction   : in  std_logic_vector(31 downto 0);      -- Instruction of ID/EX
     id_ex_RegRs         : in  std_logic_vector(4 downto 0);       -- Address of rs ID/EX
     id_ex_RegRt         : in  std_logic_vector(4 downto 0);       -- Address of rt ID/EX
     ex_mem_RegRd        : in  std_logic_vector(4 downto 0);       -- Address of rd EX/MEM
     mem_wb_RegRd        : in  std_logic_vector(4 downto 0);       -- Address of rd MEM/WB
     ex_mem_RegRt        : in  std_logic_vector(4 downto 0);       -- Address of rt EX/MEM
-    ex_mem_RegRs         : in  std_logic_vector(4 downto 0);       -- Address of rs EX/MEM
+    ex_mem_RegRs         : in  std_logic_vector(4 downto 0);      -- Address of rs EX/MEM
     mem_wb_RegRt        : in  std_logic_vector(4 downto 0);       -- Address pf rt MEM/WB
     is_Link             : in  std_logic;
 
@@ -36,19 +37,33 @@ architecture behavior of forwarding is
 
 signal memHazA      : std_logic;
 signal memHazB      : std_logic;
+signal is_mult_Rtype   : std_logic;
+signal isLoad      : std_logic;
+signal isImmediate : std_logic;
 signal forA         : std_logic_vector(2 downto 0);
 signal forB         : std_logic_vector(2 downto 0);
 
 begin
 
-memHazA    <=     '1' when (NOT (mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRs)) else '0';
-memHazB    <=     '1' when (NOT (mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRt)) else '0';
+memHazA    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRs)) else '0';
+memHazB    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRt)) else '0';
+is_mult_Rtype <=  '1' when  (id_ex_instruction(31 downto 26) = b"000000") OR (id_ex_instruction(31 downto 26) = b"010110") else '0';
+isLoad     <=     '1' when ((id_ex_instruction(31 downto 26) = b"100000") OR (id_ex_instruction(31 downto 26) = b"100001") OR (id_ex_instruction(31 downto 26) = b"100011") OR
+                            (id_ex_instruction(31 downto 26) = b"100100") OR (id_ex_instruction(31 downto 26) = b"100101") OR (id_ex_instruction(31 downto 26) = b"101000") OR
+                            (id_ex_instruction(31 downto 26) = b"101001") OR (id_ex_instruction(31 downto 26) = b"101011")) else '0';
+isImmediate     <=     '1' when ((id_ex_instruction(31 downto 26) = b"001000") OR (id_ex_instruction(31 downto 26) = b"001001") OR (id_ex_instruction(31 downto 26) = b"001100") OR
+                            (id_ex_instruction(31 downto 26) = b"001101") OR (id_ex_instruction(31 downto 26) = b"001110") OR (id_ex_instruction(31 downto 26) = b"001010") OR
+                            (id_ex_instruction(31 downto 26) = b"001011") OR (id_ex_instruction(31 downto 26) = b"001111")) else '0';   
+
+process(ex_mem_RegWen,mem_wb_RegWen,id_ex_RegRs,id_ex_RegRt,ex_mem_RegRd,mem_wb_RegRd,ex_mem_RegRt,ex_mem_RegRs,mem_wb_RegRt,is_Link, isImmediate,isLoad,is_mult_Rtype)
+  begin
+
+
+ 
 forA       <=     "000";
 forB       <=     "000";
 
-process
-  begin
-  
+if(is_mult_Rtype = '1') then  
   --EX Hazard A
   if(ex_mem_RegWen = '1') then
     if(ex_mem_RegRd /= b"00000") then
@@ -81,14 +96,16 @@ process
   -- MEM Hazard B
   if(mem_wb_RegWen = '1') then
     if(mem_wb_RegRd /= b"00000") then
-      if(memHazA = '1') then
+      if(memHazB = '1') then
         if(mem_wb_RegRd = id_ex_RegRt) then
           forB <= "010";
         end if;
       end if;
     end if;
   end if;
-  
+end if;  
+
+if(isLoad = '1') then
   -- Load hazard B Rs
   if(ex_mem_RegWen = '1') then
     if(ex_mem_RegRd /= b"00000") then
@@ -106,7 +123,9 @@ process
       end if;
     end if;
   end if;
- 
+end if;
+
+if(isImmediate = '1') then 
    --Immediate Hazard A
   if(ex_mem_RegWen = '1') then
     if(ex_mem_RegRd /= b"00000") then
@@ -139,13 +158,14 @@ process
   -- Immediate Hazard B
   if(mem_wb_RegWen = '1') then
     if(mem_wb_RegRd /= b"00000") then
-      if(memHazA = '1') then
+      if(memHazB = '1') then
         if(mem_wb_RegRt = id_ex_RegRt) then
           forB <= "101";
         end if;
       end if;
     end if;
   end if;
+end if;
   
   -- Link Hazard A
   if(ex_mem_RegWen = '1') then
@@ -169,7 +189,7 @@ process
     end if;
   end if;
 
-wait for 100 ns;
+--wait for 100 ns;
 end process;
 
 forwardA <= forA;

@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use work.all;
 
-entity Eightto1Mux is
+entity eightto1mux_32 is
   port(
     input_0        :       in  std_logic_vector(31 downto 0);
     input_1       :        in  std_logic_vector(31 downto 0);
@@ -15,10 +15,10 @@ entity Eightto1Mux is
     sel3         :       in  std_logic_vector(2 downto 0);
     output       :       out std_logic_vector(31 downto 0));
     
-end Eightto1Mux;
+end eightto1mux_32;
 
 
-architecture structure of Eightto1Mux is
+architecture structure of eightto1mux_32 is
   
 begin
   

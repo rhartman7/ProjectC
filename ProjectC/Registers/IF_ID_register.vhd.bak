@@ -6,12 +6,12 @@ entity IF_ID_register is
   generic (N : integer := 32);
   
   port(
-   	in_instruction 	: in std_logic_vector(31 downto 0);
-	in_pc		: in std_logic_vector(31 downto 0);
+   	IF_instruction 	: in std_logic_vector(31 downto 0);
+	IF_pc		: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
-    	out_instruction : out  std_logic_vector(31 downto 0);
-   	out_pc        	: out std_logic_vector(31 downto 0));
+    	IF_ID_instruction : out  std_logic_vector(31 downto 0);
+   	IF_ID_pc        	: out std_logic_vector(31 downto 0));
   
 end IF_ID_register;
 
@@ -35,15 +35,15 @@ instruction : N_BitRegister
     i_CLK  => clk,
     i_RST => reset,
     i_WE => '1',
-    i_Input => in_instruction,
-    o_Out => out_instruction);
+    i_Input => IF_instruction,
+    o_Out => IF_ID_instruction);
 
 PC : N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
     i_WE => '1',
-    i_Input => in_pc,
-    o_Out => out_pc);
+    i_Input => IF_pc,
+    o_Out => IF_ID_pc);
 
 end structure;

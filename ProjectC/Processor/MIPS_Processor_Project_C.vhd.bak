@@ -17,6 +17,7 @@ component forwarding is
   port(
     ex_mem_RegWen       : in  std_logic;                          -- WrEn EX/MEM
     mem_wb_RegWen       : in  std_logic;                          -- WrEn MEM/WB
+    id_ex_instruction   : in  std_logic_vector(31 downto 0);      -- Instruction of ID/EX
     id_ex_RegRs         : in  std_logic_vector(4 downto 0);       -- Address of rs ID/EX
     id_ex_RegRt         : in  std_logic_vector(4 downto 0);       -- Address of rt ID/EX
     ex_mem_RegRd        : in  std_logic_vector(4 downto 0);       -- Address of rd EX/MEM
@@ -42,7 +43,7 @@ component forwarding is
                                                                   -- when 101, I-type 2 instructions later
 end component;
 
-component Eightto1Mux is
+component eightto1mux_32 is
   port(
     input_0        :       in  std_logic_vector(31 downto 0);
     input_1       :        in  std_logic_vector(31 downto 0);
@@ -215,6 +216,7 @@ component IF_ID_register
    	IF_instruction 	: in std_logic_vector(31 downto 0);
 	IF_pc		: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
+	wr_en   : in std_logic;
 	clk		: in std_logic;
     	IF_ID_instruction : out  std_logic_vector(31 downto 0);
    	IF_ID_pc        	: out std_logic_vector(31 downto 0));
@@ -310,7 +312,7 @@ signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 signal EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out,  s_write_data_final, s_input_2_alu, s_ForwardA_out, s_ForwardB_out : std_logic_vector(31 downto 0);
 signal s_alu_zero_out, s_alu_c_out,s_alu_overflow : std_logic;
 --signal for branch detection unit
-signal s_take_branch: std_logic;
+signal s_take_branch, if_id_write : std_logic;
 --signals for PC
 signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0); 
 --brnach
@@ -360,13 +362,12 @@ instuction_mem_i : instruction_mem
 			wren	=>'0',
 			q	=> IF_instruction); 
 
-IF_ID_Reg: IF_ID_register
-  
-  port MAP(
-    
+hi: IF_ID_register
+  port MAP(   
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
 	reset=>s_reset,
+	wr_en =>'1',
 	clk=>clk,
     	IF_ID_instruction=> IF_ID_instruction,
  	IF_ID_pc=>IF_ID_PC);
@@ -483,7 +484,7 @@ o_reg2_immediate_alu_in : mux_21_n
 		o_Z => s_input_2_alu);
 		
 -- ALU IN Mux A
-ALU_in_A: struct_mux81_32_bit
+ALU_in_A: eightto1mux_32
   port MAP(
     input_0        => ID_EX_reg_out_1,
     input_1        => EX_alu_out,
@@ -497,7 +498,7 @@ ALU_in_A: struct_mux81_32_bit
     output         => s_ForwardA_out);
     
 -- ALU IN Mux B
-ALU_in_B: struct_mux81_32_bit
+ALU_in_B: eightto1mux_32
   port MAP(
     input_0        => s_input_2_alu,
     input_1        => EX_alu_out,
