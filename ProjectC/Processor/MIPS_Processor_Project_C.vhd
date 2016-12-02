@@ -488,11 +488,11 @@ o_reg2_immediate_alu_in : mux_21_n
 ALU_in_A: eightto1mux_32
   port MAP(
     input_0        => ID_EX_reg_out_1,
-    input_1        => EX_alu_out,
-    input_2        => EX_MEM_alu_out,
+    input_1        => EX_MEM_alu_out,
+    input_2        => MEM_WB_alu_out,
     input_3        => s_which_load,
-    input_4        => EX_alu_out,
-    input_5        => EX_MEM_alu_out,
+    input_4        => EX_MEM_alu_out,
+    input_5        => MEM_WB_alu_out,
     input_6        => ID_branch_logic,
     input_7        => x"00000000",
     sel3           => s_ForwardA,
@@ -502,11 +502,11 @@ ALU_in_A: eightto1mux_32
 ALU_in_B: eightto1mux_32
   port MAP(
     input_0        => s_input_2_alu,
-    input_1        => EX_alu_out,
-    input_2        => EX_MEM_alu_out,
+    input_1        => EX_MEM_alu_out,
+    input_2        => MEM_WB_alu_out,
     input_3        => s_which_load,
-    input_4        => EX_alu_out,
-    input_5        => EX_MEM_alu_out,
+    input_4        => EX_MEM_alu_out,
+    input_5        => MEM_WB_alu_out,
     input_6        => ID_branch_logic,
     input_7        => x"00000000",
     sel3           => s_ForwardB,

@@ -457,6 +457,7 @@ forward_logic: forwarding
   port MAP(
     ex_mem_RegWen       => EX_MEM_controller(12),                          -- WrEn EX/MEM
     mem_wb_RegWen       => MEM_WB_controller(12),                        -- WrEn MEM/WB
+    id_ex_instruction   => ID_EX_instruction,      -- Instruction of ID/EX
     id_ex_RegRs         => ID_EX_instruction(25 downto 21),                              -- Address of rs ID/EX
     id_ex_RegRt         => ID_EX_instruction(20 downto 16),                             -- Address of rt ID/EX
     ex_mem_RegRd        => EX_MEM_instruction(15 downto 11),      -- Address of rd EX/MEM
