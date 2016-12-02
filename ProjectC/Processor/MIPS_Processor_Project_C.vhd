@@ -26,6 +26,8 @@ component forwarding is
     ex_mem_RegRs         : in  std_logic_vector(4 downto 0);       -- Address of rs EX/MEM
     mem_wb_RegRt        : in  std_logic_vector(4 downto 0);       -- Address pf rt MEM/WB
     is_Link             : in  std_logic;
+    is_rd_rt_ex_mem     : in std_logic;
+    is_rd_rt_mem_wb     : in std_logic;
 
     
     forwardA            : out std_logic_vector(2 downto 0);       -- when 000, first ALU operand from reg file
@@ -466,6 +468,8 @@ forward_logic: forwarding
     ex_mem_RegRs        => EX_MEM_instruction(25 downto 21),
     mem_wb_RegRt        => MEM_WB_instruction(20 downto 16),
     is_Link             => EX_MEM_controller(1),
+    is_rd_rt_ex_mem     => EX_MEM_controller(11),
+    is_rd_rt_mem_wb     => MEM_WB_controller(11),
 
     
     forwardA            => s_ForwardA,                            -- when 00, first ALU operand from reg file
