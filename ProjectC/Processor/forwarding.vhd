@@ -45,8 +45,8 @@ signal forB         : std_logic_vector(2 downto 0);
 
 begin
 
-memHazA    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRs)) else '0';
-memHazB    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRt)) else '0';
+memHazA    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd = id_ex_RegRs)) else '0';
+memHazB    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd = id_ex_RegRt)) else '0';
 is_mult_Rtype <=  '1' when  (id_ex_instruction(31 downto 26) = b"000000") OR (id_ex_instruction(31 downto 26) = b"010110") else '0';
 isLoad     <=     '1' when ((id_ex_instruction(31 downto 26) = b"100000") OR (id_ex_instruction(31 downto 26) = b"100001") OR (id_ex_instruction(31 downto 26) = b"100011") OR
                             (id_ex_instruction(31 downto 26) = b"100100") OR (id_ex_instruction(31 downto 26) = b"100101") OR (id_ex_instruction(31 downto 26) = b"101000") OR

@@ -45,6 +45,8 @@ signal forB         : std_logic_vector(2 downto 0);
 
 begin
 
+memHazA    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRs)) else '0';
+memHazB    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRt)) else '0';
 is_mult_Rtype <=  '1' when  (id_ex_instruction(31 downto 26) = b"000000") OR (id_ex_instruction(31 downto 26) = b"010110") else '0';
 isLoad     <=     '1' when ((id_ex_instruction(31 downto 26) = b"100000") OR (id_ex_instruction(31 downto 26) = b"100001") OR (id_ex_instruction(31 downto 26) = b"100011") OR
                             (id_ex_instruction(31 downto 26) = b"100100") OR (id_ex_instruction(31 downto 26) = b"100101") OR (id_ex_instruction(31 downto 26) = b"101000") OR
@@ -56,8 +58,7 @@ isImmediate     <=     '1' when ((id_ex_instruction(31 downto 26) = b"001000") O
 process(ex_mem_RegWen,mem_wb_RegWen,id_ex_RegRs,id_ex_RegRt,ex_mem_RegRd,mem_wb_RegRd,ex_mem_RegRt,ex_mem_RegRs,mem_wb_RegRt,is_Link, isImmediate,isLoad,is_mult_Rtype)
   begin
 
-memHazA    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRs)) else '0';
-memHazB    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_RegRd /= id_ex_RegRt)) else '0';
+
  
 forA       <=     "000";
 forB       <=     "000";
