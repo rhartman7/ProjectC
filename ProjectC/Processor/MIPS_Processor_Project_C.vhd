@@ -13,6 +13,15 @@ end MIPS_Processor_Project_C;
 architecture structure of MIPS_Processor_Project_C is 
 --General components
 
+component hazard_detection
+  port(
+    if_id_controller        : in std_logic_vector(12 downto 0);
+    take_Branch             : in std_logic;
+    stall             	     : out std_logic;
+    ex_mem_flush			         : out std_logic;
+	   if_id_flush		          : out std_logic
+	   );
+  end component;
 component forwarding is
   port(
     ex_mem_RegWen       : in  std_logic;                          -- WrEn EX/MEM
@@ -179,6 +188,7 @@ component PC_Register
     PC_next           :         in  std_logic_vector(31 downto 0);
     PC_clk            :         in  std_logic;
     PC_reset          :         in  std_logic;
+    PC_write_en      :         in  std_logic;
     PC_current        :         out std_logic_vector(31 downto 0));
 end component;
 
@@ -321,6 +331,8 @@ signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value      :
 signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_logic  : std_logic_vector(31 downto 0);
 -- forwarding signals
 signal s_forwardA, s_forwardB     : std_logic_vector(2 downto 0);
+--hazard detection
+signal stall,ex_mem_flush,if_id_flush : std_logic;
 
 
 --CONTROL SIGNALS ALU
@@ -346,6 +358,7 @@ pc: PC_Register
     PC_next =>s_PC_value,          
     PC_clk =>clk,
     PC_reset =>s_reset,
+    PC_write_en=>stall,         ---!!!!!!!
     PC_current =>s_current_PC_value);
 
 --PC+4
@@ -368,10 +381,10 @@ hi: IF_ID_register
   port MAP(   
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
-	reset=>s_reset,
-	wr_en =>'1',
+	reset=>s_reset,--if_id_flush,
+	wr_en =>stall,                   ---!!!!!!!
 	clk=>clk,
-    	IF_ID_instruction=> IF_ID_instruction,
+ 	IF_ID_instruction=> IF_ID_instruction,
  	IF_ID_pc=>IF_ID_PC);
   
 
@@ -435,6 +448,13 @@ branch_detection: branch_detection_Unit
     reg2 =>ID_reg_out_2,
     take_Branch => s_take_branch);
 
+haz_detection :  hazard_detection
+  port MAP(
+    if_id_controller => ID_controller,
+    take_Branch     =>s_take_branch, 
+    stall          => stall,
+    ex_mem_flush			=> ex_mem_flush,
+	   if_id_flush		 => if_id_flush);
 
 ID_EX_reg: ID_EX_register 
   port MAP(
@@ -565,7 +585,7 @@ port MAP	(
 	EX_branch_logic		=>ID_EX_branch_logic,
 	EX_reg_write		=>s_write_address_final,
 	EX_reg_out_1 => ID_EX_reg_out_1,
-	reset 			=>s_reset,
+	reset 			=>ex_mem_flush,       --!!!!!!!!!!!!!!!!!!!!
 	clk			=>clk,
 	EX_MEM_instruction => EX_MEM_instruction,
     	EX_MEM_controller 	=>EX_MEM_controller,

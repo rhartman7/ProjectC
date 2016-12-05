@@ -108,6 +108,7 @@ if(is_mult_Rtype = '1') then
       end if;
     end if;
   end if;
+  
 end if;  
 
 if(isLoad = '1') then
@@ -154,7 +155,7 @@ if(isImmediate = '1') then
       end if;
       end if;
     end if;
-  end if;
+end if;
   
   -- Link Hazard A
   if(ex_mem_RegWen = '1') then

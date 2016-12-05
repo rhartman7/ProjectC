@@ -9,7 +9,6 @@ entity PC_Register is
     PC_next           :         in  std_logic_vector(31 downto 0);
     PC_clk            :         in  std_logic;
     PC_reset          :         in  std_logic;
-    PC_write_en      :         in  std_logic;
     PC_current        :         out std_logic_vector(31 downto 0));
 
 end PC_Register;
@@ -35,7 +34,7 @@ begin
     port map(
       i_CLK       =>        PC_clk,
       i_RST       =>        PC_Reset,
-      i_WE        =>        PC_write_en,
+      i_WE        =>        '1',
       i_Input     =>        PC_next,
       o_Out       =>        PC_current);
       
