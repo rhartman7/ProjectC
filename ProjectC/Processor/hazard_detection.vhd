@@ -5,43 +5,38 @@ use work.all;
 
 entity hazard_detection is
   port(
-    id_ex_instruction       : in std_logic_vector(31 downto 0);
-    if_id_instruction       : in std_logic_vector(31 downto 0);
-    id_ex_controller        : in std_logic_vector(31 downto 0);
+    if_id_controller        : in std_logic_vector(31 downto 0);
     take_Branch             : in std_logic;
-    PC_Write                : out std_logic;
-    if_id_write             : out std_logic;
-    id_ex_stall             : out std_logic;
-    if_id_reset             : out std_logic);
+    stall             	 : out std_logic;
+    ex_mem_flush			 : out std_logic;
+	if_id_flush		 : out std_logic);
     
 end hazard_detection;
 
 architecture behavior of hazard_detection is
 
-signal PC_wren, if_id_wren, id_ex_fl : std_logic;
+signal ex_mem_flush, if_id_flush, stall: std_logic;
 
 begin
 
-PC_wren    = '1';
-if_id_wren = '1';
-id_ex_st   = '0';
+ex_mem_flush = '0';
+if_id_flush = '0';
+stall   = '1';
 
 process
   begin
+--stall= write enable is zero. stall a pipeline register stall the ones before it and PC. Nothing gets written to PC, IF/ID, ID/EX. Flush very nexxt pipeline registerFlush EX/MEM pipeline
+
+--flush= resetting the register
   
-  if(id_ex_MemRead = '1') then
-    if(id_ex_RegRt = if_id_RegRs) then
-      if(id_ex_RegRt = if_id_RegRt) then
-        id_ex_st = '1';
-      end if;
-    end if;
+  if(id_ex_controller= '1') then
+        stall= '0';
+	   ex_mem_flush ='1';
   end if;
-  
+      
   if(take_Branch = '1') then
-    id_ex_st = '1';
-    PC_wren = '0';
-    if_id_wren = '0';
- 
+    if_id_flush = '1';
+	end if; 
 wait for 100 ns;
 end process;
 
