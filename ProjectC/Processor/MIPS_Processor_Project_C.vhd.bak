@@ -15,11 +15,16 @@ architecture structure of MIPS_Processor_Project_C is
 
 component hazard_detection
   port(
-    if_id_controller        : in std_logic_vector(12 downto 0);
+    ex_mem_controller  : in std_logic_vector(12 downto 0);
+    id_ex_RegRt       : in std_logic_vector(4 downto 0);
+    id_ex_RegRs       : in std_logic_vector(4 downto 0);
+    ex_mem_regRt       : in std_logic_vector(4 downto 0);
+    ex_mem_stall             	     : out std_logic;
+    id_ex_stall             	     : out std_logic;
+    if_id_stall             	     : out std_logic;
+    pc_stall             	     : out std_logic;
     take_Branch             : in std_logic;
-    stall             	     : out std_logic;
-    ex_mem_flush			         : out std_logic;
-	   if_id_flush		          : out std_logic
+    ex_mem_flush			         : out std_logic
 	   );
   end component;
 component forwarding is
@@ -248,6 +253,7 @@ component ID_EX_register
 	ID_branch_logic	: in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
+	ID_EX_we    : in std_logic;
  	ID_EX_controller 	: out std_logic_vector(12 downto 0);
 	ID_EX_alu_controller	: out std_logic_vector(10 downto 0);
 	ID_EX_reg_out_1 	: out std_logic_vector(31 downto 0);
@@ -273,6 +279,7 @@ component EX_MEM_register
 	EX_reg_out_1 : std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
+	EX_MEM_we : in std_logic;
 	EX_MEM_instruction : out std_logic_vector(31 downto 0);
     	EX_MEM_controller 	: out std_logic_vector(12 downto 0);
 	EX_MEM_alu_controller	: out std_logic_vector(10 downto 0);
@@ -332,7 +339,7 @@ signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_l
 -- forwarding signals
 signal s_forwardA, s_forwardB     : std_logic_vector(2 downto 0);
 --hazard detection
-signal stall,ex_mem_flush,if_id_flush : std_logic;
+signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush	: std_logic;
 
 
 --CONTROL SIGNALS ALU
@@ -358,7 +365,7 @@ pc: PC_Register
     PC_next =>s_PC_value,          
     PC_clk =>clk,
     PC_reset =>s_reset,
-    PC_write_en=>stall,         ---!!!!!!!
+    PC_write_en=>pc_stall,         ---!!!!!!!
     PC_current =>s_current_PC_value);
 
 --PC+4
@@ -382,7 +389,7 @@ hi: IF_ID_register
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
 	reset=>s_reset,--if_id_flush,
-	wr_en =>stall,                   ---!!!!!!!
+	wr_en =>if_id_stall,                   ---!!!!!!!
 	clk=>clk,
  	IF_ID_instruction=> IF_ID_instruction,
  	IF_ID_pc=>IF_ID_PC);
@@ -450,11 +457,16 @@ branch_detection: branch_detection_Unit
 
 haz_detection :  hazard_detection
   port MAP(
-    if_id_controller => ID_controller,
-    take_Branch     =>s_take_branch, 
-    stall          => stall,
-    ex_mem_flush			=> ex_mem_flush,
-	   if_id_flush		 => if_id_flush);
+        ex_mem_controller  => EX_MEM_controller,
+    id_ex_RegRt     =>  ID_EX_instruction(20 downto 16),
+    id_ex_RegRs       => ID_EX_instruction(25 downto 21),
+    ex_mem_regRt       => EX_MEM_instruction(20 downto 16),
+    ex_mem_stall       => ex_mem_stall,
+    id_ex_stall        => id_ex_stall,
+    if_id_stall     => if_id_stall,
+    pc_stall        => pc_stall,
+    take_Branch             => s_take_branch,
+    ex_mem_flush			     => ex_mem_flush);
 
 ID_EX_reg: ID_EX_register 
   port MAP(
@@ -467,6 +479,7 @@ ID_EX_reg: ID_EX_register
 	ID_branch_logic=> ID_branch_logic,
 	reset=>s_reset,
 	clk=>clk,
+	ID_EX_we  =>   id_ex_stall,
     	ID_EX_controller=>ID_EX_controller,
 	ID_EX_alu_controller=>ID_EX_alu_controller,
 	ID_EX_reg_out_1=>ID_EX_reg_out_1,
@@ -585,8 +598,9 @@ port MAP	(
 	EX_branch_logic		=>ID_EX_branch_logic,
 	EX_reg_write		=>s_write_address_final,
 	EX_reg_out_1 => ID_EX_reg_out_1,
-	reset 			=>s_reset,--ex_mem_flush,
+	reset 			=>ex_mem_flush,       --!!!!!!!!!!!!!!!!!!!!
 	clk			=>clk,
+	EX_MEM_we   => ex_mem_stall,   --!!!!!!!!!!!!!!!!!!!
 	EX_MEM_instruction => EX_MEM_instruction,
     	EX_MEM_controller 	=>EX_MEM_controller,
 	EX_MEM_alu_controller	=>EX_MEM_alu_controller,

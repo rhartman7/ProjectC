@@ -127,7 +127,7 @@ branch_logic_reg: N_BitRegister
     i_Input => EX_branch_logic,
     o_Out => EX_MEM_branch_logic);
     
-branch_logic_reg: N_BitRegister
+instruction: N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
