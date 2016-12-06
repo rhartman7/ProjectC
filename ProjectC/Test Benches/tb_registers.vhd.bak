@@ -125,7 +125,7 @@ signal  ID_controller,ID_EX_controller, EX_MEM_controller, MEM_WB_controller : s
 --CONTROL SIGNALS 
 signal ID_alu_controller, ID_EX_alu_controller, EX_MEM_alu_controller, MEM_WB_alu_controller : std_logic_vector(10 downto 0);
 
-signal s_reset,clk, ID_EX_we, EX__MEM_we, MEM_WB_we : std_logic;
+signal s_reset,clk, ID_EX_we, EX_MEM_we, MEM_WB_we : std_logic;
 signal s_write_address_final : std_logic_vector(4 downto 0);
 
 
@@ -228,6 +228,8 @@ MEM_WB_we <= '1';
 clk <=  clk;
 ID_controller <= "0000000000000";
 ID_alu_controller <= "00000000000";
+ID_EX_controller <= "0000000000000";
+EX_alu_controller <= "00000000000";
 ID_reg_out_1 <= x"00001111";
 ID_reg_out_2 <=x"00001111";
 ID_immediate <= x"FFFFFFFF";
