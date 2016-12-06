@@ -16,6 +16,7 @@ entity MEM_WB_register is
 	MEM_reg_out_2 : in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
+	MEM_WB_we		: in std_logic;
 	MEM_WB_instruction : out std_logic_vector(31 downto 0);
 	MEM_WB_reg_out_2 : out std_logic_vector(31 downto 0);
     	MEM_WB_controller 	: out std_logic_vector(12 downto 0);
@@ -82,7 +83,7 @@ alu_out : N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_alu_out,
     o_Out => MEM_WB_alu_out);
 
@@ -90,7 +91,7 @@ data_mem_out_reg : N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_data_mem_out,
     o_Out => MEM_WB_data_mem_out);
     
@@ -98,7 +99,7 @@ data_mem_out_reg : N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_reg_out_2,
     o_Out => MEM_WB_reg_out_2);
 
@@ -106,7 +107,7 @@ control_reg : Register_13_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_controller,
     o_Out => MEM_WB_controller);
 
@@ -114,7 +115,7 @@ alu_control_reg : register_11_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_alu_controller,
     o_Out => MEM_WB_alu_controller);
 
@@ -122,7 +123,7 @@ branch_logic_reg: N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_branch_logic,
     o_Out => MEM_WB_branch_logic);
 
@@ -130,7 +131,7 @@ instruction: N_BitRegister
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_instruction,
     o_Out => MEM_WB_instruction);
 
@@ -138,7 +139,7 @@ reg_write_ex_mem: register_5_bit
   port MAP(
     i_CLK  => clk,
     i_RST => reset,
-    i_WE => '1',
+    i_WE => MEM_WB_we,
     i_Input => MEM_reg_write,
     o_Out => MEM_WB_reg_write);
 end structure;

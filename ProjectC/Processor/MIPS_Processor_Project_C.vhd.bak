@@ -20,6 +20,7 @@ component hazard_detection
     id_ex_RegRs       : in std_logic_vector(4 downto 0);
     ex_mem_regRt       : in std_logic_vector(4 downto 0);
     ex_mem_stall             	     : out std_logic;
+        s_reset            : in std_logic;
     id_ex_stall             	     : out std_logic;
     if_id_stall             	     : out std_logic;
     pc_stall             	     : out std_logic;
@@ -462,6 +463,7 @@ haz_detection :  hazard_detection
     id_ex_RegRs       => ID_EX_instruction(25 downto 21),
     ex_mem_regRt       => EX_MEM_instruction(20 downto 16),
     ex_mem_stall       => ex_mem_stall,
+        s_reset        => s_reset,
     id_ex_stall        => id_ex_stall,
     if_id_stall     => if_id_stall,
     pc_stall        => pc_stall,

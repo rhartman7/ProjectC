@@ -304,6 +304,7 @@ component MEM_WB_register
 	MEM_reg_out_2 : in std_logic_vector(31 downto 0);
 	reset 		: in std_logic;
 	clk		: in std_logic;
+	MEM_WB_we		: in std_logic;
 	MEM_WB_instruction : out std_logic_vector(31 downto 0);
 	MEM_WB_reg_out_2 : out std_logic_vector(31 downto 0);
     	MEM_WB_controller 	: out std_logic_vector(12 downto 0);
@@ -645,6 +646,7 @@ MEM_WB_reg: MEM_WB_register
 	MEM_reg_out_2 => EX_MEM_reg_out_2,
 	reset 		=>s_reset,
 	clk		=>clk,
+	MEM_WB_we	=>'1',
 	MEM_WB_instruction => MEM_WB_instruction,
 	MEM_WB_reg_out_2 => MEM_WB_reg_out_2,
     	MEM_WB_controller 	=>MEM_WB_controller ,
