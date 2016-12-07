@@ -44,9 +44,9 @@ if_id_st <= '1';
 pc_st <= '1';
 --id_ex_controller_ou <= id_ex_controller;
 --stall= write enable is zero. stall a pipeline register stall the ones before it and PC. Nothing gets written to PC, IF/ID, ID/EX. Flush very nexxt pipeline registerFlush EX/MEM pipeline
-if(s_reset = '1') then 
-  if_id_res <= '1';
-end if;
+--if(s_reset = '1') then 
+--  if_id_res <= '1';
+--end if;
 
 --flush= resetting the register
 if(id_ex_controller(10) = '1') then	 
