@@ -175,6 +175,12 @@ component mux_21_13_bit
 		o_Z : out std_logic_vector(N-1 downto 0));
 end component;
 
+component mux_21
+  	port(i_X  : in std_logic;
+		i_Y: in std_logic;
+		s_1 : in std_logic;
+		o_Z : out std_logic);
+end component;
 
 component immediate
 	port(	
@@ -348,7 +354,7 @@ signal ID_immediate,ID_EX_immediate : std_logic_vector(31 downto 0);
 signal EX_alu_out, EX_MEM_alu_out, MEM_WB_alu_out,  s_write_data_final, s_input_2_alu, s_ForwardA_out, s_ForwardB_out : std_logic_vector(31 downto 0);
 signal s_alu_zero_out, s_alu_c_out,s_alu_overflow : std_logic;
 --signal for branch detection unit
-signal s_take_branch, if_id_write : std_logic;
+signal s_take_branch : std_logic;
 --signals for PC
 signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0); 
 --brnach
@@ -356,7 +362,7 @@ signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_l
 -- forwarding signals
 signal s_forwardA, s_forwardB     : std_logic_vector(2 downto 0);
 --hazard detection
-signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush, IF_ID_reset	: std_logic;
+signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush, IF_ID_reset, s_reset_final	: std_logic;
 
 
 --CONTROL SIGNALS ALU
@@ -400,12 +406,20 @@ instuction_mem_i : instruction_mem
 			data	=>x"00000000",
 			wren	=>'0',
 			q	=> IF_instruction); 
+			
+r_reset_mux_21 : mux_21
+  	port MAP(
+  	i_X  => IF_ID_reset,
+		i_Y  => s_reset,
+		s_1 => s_reset,
+		o_Z => s_reset_final);
+
 
 hi: IF_ID_register
   port MAP(   
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
-	reset=>IF_ID_reset,--if_id_flush,
+	reset=>s_reset_final,  --IF_ID_reset,--if_id_flush,
 	wr_en =>if_id_stall,                   ---!!!!!!!
 	clk=>clk,
  	IF_ID_instruction=> IF_ID_instruction,

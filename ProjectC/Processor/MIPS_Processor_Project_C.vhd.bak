@@ -175,6 +175,12 @@ component mux_21_13_bit
 		o_Z : out std_logic_vector(N-1 downto 0));
 end component;
 
+component mux_21
+  	port(i_X  : in std_logic;
+		i_Y: in std_logic;
+		s_1 : in std_logic;
+		o_Z : out std_logic);
+end component;
 
 component immediate
 	port(	
@@ -356,7 +362,7 @@ signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_l
 -- forwarding signals
 signal s_forwardA, s_forwardB     : std_logic_vector(2 downto 0);
 --hazard detection
-signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush, IF_ID_reset	: std_logic;
+signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush, IF_ID_reset, s_reset_final	: std_logic;
 
 
 --CONTROL SIGNALS ALU
@@ -400,12 +406,20 @@ instuction_mem_i : instruction_mem
 			data	=>x"00000000",
 			wren	=>'0',
 			q	=> IF_instruction); 
+			
+r_reset_mux_21 : mux_21
+  	port MAP(
+  	i_X  => IF_ID_reset,
+		i_Y  => s_reset,
+		s_1 => s_reset,
+		o_Z => s_reset_final);
+
 
 hi: IF_ID_register
   port MAP(   
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
-	reset=>IF_ID_reset,--if_id_flush,
+	reset=>s_reset_final,  --IF_ID_reset,--if_id_flush,
 	wr_en =>if_id_stall,                   ---!!!!!!!
 	clk=>clk,
  	IF_ID_instruction=> IF_ID_instruction,
@@ -690,7 +704,7 @@ MEM_WB_reg: MEM_WB_register
 --load component
 load_data :load
 	port MAP (
-		in_memory  => MEM_WB_data_mem_out,
+		in_memory  => MEM_data_mem_out,
 		load_which_load => MEM_WB_controller(5 downto 4),		--s_load_which_load, 
 		load_type_sign => MEM_WB_controller(3),				--s_type_sign,
 		load_alu_out => MEM_WB_alu_out(1 downto 0),
