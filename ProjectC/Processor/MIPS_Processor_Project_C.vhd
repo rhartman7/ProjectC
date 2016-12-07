@@ -690,7 +690,7 @@ MEM_WB_reg: MEM_WB_register
 --load component
 load_data :load
 	port MAP (
-		in_memory  => MEM_WB_data_mem_out,
+		in_memory  => MEM_data_mem_out,
 		load_which_load => MEM_WB_controller(5 downto 4),		--s_load_which_load, 
 		load_type_sign => MEM_WB_controller(3),				--s_type_sign,
 		load_alu_out => MEM_WB_alu_out(1 downto 0),

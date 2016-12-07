@@ -670,7 +670,7 @@ MEM_WB_reg: MEM_WB_register
    	MEM_controller 		=>EX_MEM_controller,
 	MEM_alu_controller	=>EX_MEM_alu_controller,
 	MEM_alu_out 		=>EX_MEM_alu_out,
-	MEM_data_mem_out	=>   s_which_load, --MEM_data_mem_out,
+	MEM_data_mem_out	=>   MEM_data_mem_out,
 	MEM_branch_logic	=>EX_MEM_branch_logic, 
 	MEM_reg_write		=>EX_MEM_reg_write,
 	MEM_reg_out_2 => EX_MEM_reg_out_2,
@@ -690,10 +690,10 @@ MEM_WB_reg: MEM_WB_register
 --load component
 load_data :load
 	port MAP (
-		in_memory  => MEM_data_mem_out,
-		load_which_load => EX_MEM_controller(5 downto 4),		--s_load_which_load, 
-		load_type_sign => EX_MEM_controller(3),				--s_type_sign,
-		load_alu_out => EX_MEM_alu_out(1 downto 0),
+		in_memory  => MEM_WB_data_mem_out,
+		load_which_load => MEM_WB_controller(5 downto 4),		--s_load_which_load, 
+		load_type_sign => MEM_WB_controller(3),				--s_type_sign,
+		load_alu_out => MEM_WB_alu_out(1 downto 0),
 		out_load => s_which_load);
 
 
@@ -701,7 +701,7 @@ load_data :load
 alu_out_lw_write_data_register : mux_21_n
 	port MAP(
 		i_X  =>MEM_WB_alu_out,
-		i_Y =>  MEM_WB_data_mem_out, --s_which_load,
+		i_Y =>  s_which_load,
 		s_1 =>MEM_WB_controller(10),		--s_mem_to_reg
 		o_Z => s_write_data);
 

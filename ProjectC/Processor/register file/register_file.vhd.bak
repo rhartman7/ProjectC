@@ -71,7 +71,7 @@ begin
 	end generate;	
 	
 	-- the bank of 32-bit registers; reg_0 is created by itself so the reset can always be 1 (because reg_0 data should always be 0)
-	reg_0 : n_bit_reg_clock
+	reg_0 : n_bit_reg
 		port map(	i_CLK => i_CLK,
 				i_RST => '1',
 				i_WE => '0',
@@ -80,7 +80,7 @@ begin
 		
 	
     G2: for i in 1 to 31 generate
-		reg_i : n_bit_reg_clock
+		reg_i : n_bit_reg
 			port map(	i_CLK => i_CLK,
 					i_RST => i_RST,
 					i_WE => write_enable(i),
