@@ -13,7 +13,7 @@ architecture structure of SixteenTo32Extender is
 
 begin
   
-process(control, input16)
+process
   begin
     
     if control = '1' then
@@ -26,6 +26,7 @@ process(control, input16)
     else
       output32 <= x"0000" & input16;
   end if;
+  wait for 100 ns;
       
 end process;
 end structure;

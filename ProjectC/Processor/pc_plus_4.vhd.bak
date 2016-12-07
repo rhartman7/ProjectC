@@ -30,24 +30,25 @@ end component;
 signal s_c_out, s_zero_out, s_overflow : std_logic;
 signal s_output : std_logic_vector(31 downto 0);
 begin
-  adder: ALU_32_bit    -- Add branch target to PC value
-    port map(
-     		a_in  =>a_input,
-		b_in   =>x"00000004",
-		op 	  =>"101",
-		add_sub  => '0',
-		load_type   =>'0',
-		result_out   =>s_output,
-		overflow   =>s_overflow,
-		zero_out   =>s_zero_out,
-		c_out 	  =>s_c_out);
+--  adder: ALU_32_bit    -- Add branch target to PC value
+--    port map(
+--     		a_in  =>a_input,
+--		b_in   =>x"00000004",
+--		op 	  =>"101",
+--		add_sub  => '0',
+--		load_type   =>'0',
+--		result_out   =>s_output,
+--		overflow   =>s_overflow,
+--		zero_out   =>s_zero_out,
+--		c_out 	  =>s_c_out);
 
-process (s_reset, o_output)
+process (s_reset, s_output)
 begin 
 if (s_reset = '1' )then
 o_output <= x"00000000";
 else
-o_output <= s_output;
+-- o_output <= s_output;
+  o_output <= std_logic_vector(unsigned(a_input) + 4);
 end if;
 end process;
 

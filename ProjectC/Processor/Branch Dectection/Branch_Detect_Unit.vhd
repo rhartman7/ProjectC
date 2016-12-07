@@ -46,12 +46,16 @@ begin
   isEqual           <=        '1' when reg1 = reg2 else '0';
   isLessZero        <=        '1' when reg1 < x"00000000" else '0';
   isGreaterZero     <=        '1' when reg1 > x"00000000" else '0';
-  isLorEqZero       <=        '1' when ((reg1 < x"00000000") OR (reg1 < x"00000000")) else '0';
-  isGorEqZero       <=        '1' when ((reg1 > x"00000000") OR (reg1 > x"00000000")) else '0';
+  isLorEqZero       <=        '1' when ((reg1 < x"00000000") OR (reg1 <= x"00000000")) else '0';
+  isGorEqZero       <=        '1' when ((reg1 > x"00000000") OR (reg1 >= x"00000000")) else '0';
 
 
-process  
+process(opCode, branch_link_code, jump_Reg_code, isBranch, isEqual, isLessZero, isGreaterZero, isGorEqZero, isLorEqZero)
+
   begin
+    
+  isBranch <= '0';
+  
   case opCode is
     
     when BEQ_instr =>
@@ -100,6 +104,7 @@ process
           isBranch        <=        '1';
         else
           isBranch        <=        '0';
+      
         end if;
       
       else
@@ -123,7 +128,7 @@ process
       end if;
       
     when J_instr =>
-      
+
       isBranch        <=        '1';
       
     when JAL_instr =>
@@ -136,6 +141,8 @@ process
         isBranch        <=        '1';
       elsif(jump_reg_code = "001000") then
         isBranch        <=        '1';
+    else
+      isBranch <= '0';
       end if;
     
 --    when JALR_instr =>
@@ -162,13 +169,13 @@ process
 --        isBranch        <=        '1';
 --      else
 --        isBranch        <=        '0';
---      end if;
+--     end if;
       
     when others =>
       isBranch            <=        '0';
       
 end case;
-wait for 100 ns;
+
 end process;
 
 take_Branch           <=        isBranch;

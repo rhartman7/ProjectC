@@ -106,17 +106,17 @@ begin
 
 with in_branch_code select out_control_special_branch <=
 		--bltz
-	    	"0000000000000" when "00001",
+	    	"0000000000000" when "00000",
 		--bqez
-		"0000000000000" when "00000",
+		"0000000000000" when "00001",
 		--bltzal
-		"1000000000001" when "01010",
+		"1000000000001" when "10000",
 		--bgezal
-		"1000000000001" when "01011",
+		"1000000000001" when "10001",
 		"1111111111111" when others;		
 
 
-process (out_control_function_code, out_control_special_branch, out_control_op_code)
+process (in_op_code, out_control_function_code, out_control_special_branch, out_control_op_code)
 begin
 if (in_op_code = "000000") then
 out_control <= out_control_function_code;

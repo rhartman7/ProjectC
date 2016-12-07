@@ -59,7 +59,7 @@ begin
 		--addiu
 	    	"1100000000000" when "001001",
 		--mul
-		"1000000000000" when "010110",
+		"1000000000000" when "011100",
 		--andi
 	    	"1100000000000" when "001100",
 		--ori
@@ -110,13 +110,13 @@ with in_branch_code select out_control_special_branch <=
 		--bqez
 		"0000000000000" when "00000",
 		--bltzal
-		"1000000000001" when "01010",
+		"1000000000001" when "10000",
 		--bgezal
-		"1000000000001" when "01011",
+		"1000000000001" when "10001",
 		"1111111111111" when others;		
 
 
-process (out_control, out_control_function_code, out_control_special_branch, out_control_op_code)
+process (in_op_code, out_control_function_code, out_control_special_branch, out_control_op_code)
 begin
 if (in_op_code = "000000") then
 out_control <= out_control_function_code;

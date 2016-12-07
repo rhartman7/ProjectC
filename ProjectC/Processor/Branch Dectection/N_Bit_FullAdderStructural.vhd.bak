@@ -28,12 +28,9 @@ component FullAdderStructural is
     
 end component;
 
-signal      carry     : std_logic_vector(N downto 0);
+signal      carry     : std_logic;
 
 begin
-  
-  carry(0) <= i_Cin_n;
-  o_Cout_n <= carry(N);
   
   G1: for i in 0 to N-1 generate
     
@@ -41,9 +38,9 @@ begin
       port map(
         a_input     =>     a_input_n(i),
         b_input     =>     b_input_n(i),
-        i_Cin       =>     carry(i),
+        i_Cin       =>     i_Cin_n,
         o_Sum       =>     o_Sum_n(i),
-        o_Cout      =>     carry(i+1));
+        o_Cout      =>     o_Cout_n);
     
   end generate;
   

@@ -69,11 +69,11 @@ if(id_ex_controller(10) = '1') then
 --        id_ex_controller_ou <= "0000000000000";
 
       end if;
-      
-if(id_controller(2) = '1') then
-  if_id_st <= '0';
-  if_id_res <= '1';
 end if;
+
+if(id_ex_controller(2) = '1') then
+ -- if_id_st <= '0';
+  if_id_res <= '1';
 end if;
 end process;
         if_id_reset <= if_id_res;

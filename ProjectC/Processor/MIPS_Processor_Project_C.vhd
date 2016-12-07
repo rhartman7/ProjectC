@@ -420,7 +420,7 @@ hi: IF_ID_register
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
 	reset=>s_reset_final,  --IF_ID_reset,--if_id_flush,
-	wr_en =>if_id_stall,                   ---!!!!!!!
+	wr_en =>'1',                   ---!!!!!!!
 	clk=>clk,
  	IF_ID_instruction=> IF_ID_instruction,
  	IF_ID_pc=>IF_ID_PC);
@@ -472,7 +472,7 @@ branch_log: branch_logic
     isJump => ID_controller(2),			--s_load_is_jump -- jump instruction when 1, branch otherwise
     branch_target => IF_ID_instruction(15 downto 0),         -- Lower 16 bits of instruction
     jump_target => IF_ID_instruction(25 downto 0),       -- Lower 26 bits of instruction
-    isJump_reg => ID_controller(0),                             -- 1 when jr or jalr instruction ie opcode(instr(31:26)) of 0, func (instr(5:0)) of 001000 or 100010 respectively
+    isJump_reg => ID_controller(1),                             -- 1 when jr or jalr instruction ie opcode(instr(31:26)) of 0, func (instr(5:0)) of 001000 or 100010 respectively
     jump_reg  => ID_reg_out_1,         -- New PC value if jr or jalr instruction, read from reg file location specified by instr(25:21)
     PC_new   => s_new_PC_current,			         -- New PC value
     link_address => ID_branch_logic);        -- Old PC value for linking instructions
@@ -662,7 +662,7 @@ port MAP	(
 store_data: store
 	port MAP
 		(
-		alu_in => EX_MEM_alu_out,
+		alu_in => MEM_WB_alu_out,
 		reg_out_2_in =>EX_MEM_reg_out_2,
 		load_size =>EX_MEM_controller(6 downto 5),		--s_load_size,
 		store_data=>s_store_data,
