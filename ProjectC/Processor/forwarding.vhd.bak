@@ -58,7 +58,7 @@ mem_wb_reg <= mem_wb_RegRd when (is_rd_rt_mem_wb = '0') else mem_wb_RegRt;
 
 memHazA    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_reg = id_ex_RegRs)) else '0';
 memHazB    <=     '1' when NOT((mem_wb_RegWen = '1') AND (ex_mem_RegRd /= b"00000") AND (ex_mem_reg = id_ex_RegRt)) else '0';
-is_mult_Rtype <=  '1' when  (id_ex_instruction(31 downto 26) = b"000000") OR (id_ex_instruction(31 downto 26) = b"010110") else '0';
+is_mult_Rtype <=  '1' when  (id_ex_instruction(31 downto 26) = b"000000") OR (id_ex_instruction(31 downto 26) = b"011100") else '0';
 isLoad     <=     '1' when ((id_ex_instruction(31 downto 26) = b"100000") OR (id_ex_instruction(31 downto 26) = b"100001") OR (id_ex_instruction(31 downto 26) = b"100011") OR
                             (id_ex_instruction(31 downto 26) = b"100100") OR (id_ex_instruction(31 downto 26) = b"100101") OR (id_ex_instruction(31 downto 26) = b"101000") OR
                             (id_ex_instruction(31 downto 26) = b"101001") OR (id_ex_instruction(31 downto 26) = b"101011")) else '0';
@@ -113,7 +113,6 @@ end if;
 
 if(isLoad = '1') then
 
-  
   -- Load hazard A Rt
   if(ex_mem_RegWen = '1') then
     if(ex_mem_reg /= b"00000") then

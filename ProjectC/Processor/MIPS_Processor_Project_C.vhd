@@ -16,8 +16,13 @@ architecture structure of MIPS_Processor_Project_C is
 component hazard_detection
   port(
     ex_mem_controller  : in std_logic_vector(12 downto 0);
+    id_ex_controller   :   in std_logic_vector(12 downto 0);
+    id_controller     : in std_logic_vector(12 downto 0);
+    if_id_reset       : out std_logic;
     id_ex_RegRt       : in std_logic_vector(4 downto 0);
     id_ex_RegRs       : in std_logic_vector(4 downto 0);
+    if_id_RegRt       : in std_logic_vector(4 downto 0);
+    if_id_RegRs       : in std_logic_vector(4 downto 0);
     ex_mem_regRt       : in std_logic_vector(4 downto 0);
     ex_mem_stall             	     : out std_logic;
         s_reset            : in std_logic;
@@ -26,6 +31,7 @@ component hazard_detection
     pc_stall             	     : out std_logic;
     take_Branch             : in std_logic;
     ex_mem_flush			         : out std_logic
+--    id_ex_controller_out   : out std_logic_vector(12 downto 0)
 	   );
   end component;
 component forwarding is
@@ -160,6 +166,15 @@ component mux_21_n
 		s_1 : in std_logic;
 		o_Z : out std_logic_vector(N-1 downto 0));
 end component;
+
+component mux_21_13_bit 
+	generic(N : integer := 13);
+  	port(i_X  : in std_logic_vector(N-1 downto 0);
+		i_Y: in std_logic_vector(N-1 downto 0);
+		s_1 : in std_logic;
+		o_Z : out std_logic_vector(N-1 downto 0));
+end component;
+
 
 component immediate
 	port(	
@@ -341,11 +356,11 @@ signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_l
 -- forwarding signals
 signal s_forwardA, s_forwardB     : std_logic_vector(2 downto 0);
 --hazard detection
-signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush	: std_logic;
+signal ex_mem_stall, id_ex_stall, if_id_stall, pc_stall, ex_mem_flush, IF_ID_reset	: std_logic;
 
 
 --CONTROL SIGNALS ALU
-signal  ID_controller,ID_EX_controller, EX_MEM_controller, MEM_WB_controller : std_logic_vector(12 downto 0);
+signal  ID_controller,ID_EX_controller, EX_MEM_controller, MEM_WB_controller, ID_controller_final : std_logic_vector(12 downto 0);
 
 --CONTROL SIGNALS 
 signal ID_alu_controller, ID_EX_alu_controller, EX_MEM_alu_controller, MEM_WB_alu_controller : std_logic_vector(10 downto 0);
@@ -390,7 +405,7 @@ hi: IF_ID_register
   port MAP(   
    	IF_instruction=>IF_instruction,
 	IF_pc=>IF_PC,
-	reset=>s_reset,--if_id_flush,
+	reset=>IF_ID_reset,--if_id_flush,
 	wr_en =>if_id_stall,                   ---!!!!!!!
 	clk=>clk,
  	IF_ID_instruction=> IF_ID_instruction,
@@ -432,7 +447,7 @@ port MAP (
 choose_immediate_value :immediate
 	port MAP(	
 		in_immediate  => IF_ID_instruction(15 downto 0),
-		in_upper_byte =>IF_ID_instruction(31 downto 16),
+		in_upper_byte =>IF_ID_instruction(15 downto 0),
 		load_which_immediate => ID_controller(9),		--s_load_which_immediate,
 		out_immediate=> ID_immediate);
 
@@ -460,8 +475,13 @@ branch_detection: branch_detection_Unit
 haz_detection :  hazard_detection
   port MAP(
         ex_mem_controller  => EX_MEM_controller,
+        id_ex_controller   => ID_EX_controller,
+    id_controller     =>  ID_controller,
+    if_id_reset       =>  IF_ID_reset,
     id_ex_RegRt     =>  ID_EX_instruction(20 downto 16),
     id_ex_RegRs       => ID_EX_instruction(25 downto 21),
+    if_id_RegRt       =>  IF_ID_instruction(20 downto 16),
+    if_id_RegRs       =>  IF_ID_instruction(25 downto 21),
     ex_mem_regRt       => EX_MEM_instruction(20 downto 16),
     ex_mem_stall       => ex_mem_stall,
         s_reset        => s_reset,
@@ -469,11 +489,21 @@ haz_detection :  hazard_detection
     if_id_stall     => if_id_stall,
     pc_stall        => pc_stall,
     take_Branch             => s_take_branch,
-    ex_mem_flush			     => ex_mem_flush);
+    ex_mem_flush			     => ex_mem_flush
+--    id_ex_controller_out => ID_controller_final
+);
+
+mux_21_13: mux_21_13_bit 	
+  	port MAP
+  	(i_X  => ID_controller,
+		i_Y  => "0000000000000",
+		s_1 => ex_mem_flush,
+		o_Z => ID_controller_final);
+
 
 ID_EX_reg: ID_EX_register 
   port MAP(
- 	ID_controller=>ID_controller,
+    ID_controller=>ID_controller_final,
 	ID_alu_controller=>ID_alu_controller,
 	ID_reg_out_1=>ID_reg_out_1,
 	ID_reg_out_2=>ID_reg_out_2,
@@ -482,7 +512,7 @@ ID_EX_reg: ID_EX_register
 	ID_branch_logic=> ID_branch_logic,
 	reset=>s_reset,
 	clk=>clk,
-	ID_EX_we  =>   id_ex_stall,
+	ID_EX_we  => '1',            --   id_ex_stall,
     	ID_EX_controller=>ID_EX_controller,
 	ID_EX_alu_controller=>ID_EX_alu_controller,
 	ID_EX_reg_out_1=>ID_EX_reg_out_1,
@@ -601,9 +631,9 @@ port MAP	(
 	EX_branch_logic		=>ID_EX_branch_logic,
 	EX_reg_write		=>s_write_address_final,
 	EX_reg_out_1 => ID_EX_reg_out_1,
-	reset 			=>ex_mem_flush,       --!!!!!!!!!!!!!!!!!!!!
+	reset 			=> s_reset,        --ex_mem_flush,       --!!!!!!!!!!!!!!!!!!!!
 	clk			=>clk,
-	EX_MEM_we   => ex_mem_stall,   --!!!!!!!!!!!!!!!!!!!
+	EX_MEM_we   => '1',   --!!!!!!!!!!!!!!!!!!!
 	EX_MEM_instruction => EX_MEM_instruction,
     	EX_MEM_controller 	=>EX_MEM_controller,
 	EX_MEM_alu_controller	=>EX_MEM_alu_controller,
@@ -640,7 +670,7 @@ MEM_WB_reg: MEM_WB_register
    	MEM_controller 		=>EX_MEM_controller,
 	MEM_alu_controller	=>EX_MEM_alu_controller,
 	MEM_alu_out 		=>EX_MEM_alu_out,
-	MEM_data_mem_out	=>MEM_data_mem_out,
+	MEM_data_mem_out	=>   MEM_data_mem_out,
 	MEM_branch_logic	=>EX_MEM_branch_logic, 
 	MEM_reg_write		=>EX_MEM_reg_write,
 	MEM_reg_out_2 => EX_MEM_reg_out_2,
@@ -671,7 +701,7 @@ load_data :load
 alu_out_lw_write_data_register : mux_21_n
 	port MAP(
 		i_X  =>MEM_WB_alu_out,
-		i_Y =>s_which_load,
+		i_Y =>  s_which_load,
 		s_1 =>MEM_WB_controller(10),		--s_mem_to_reg
 		o_Z => s_write_data);
 

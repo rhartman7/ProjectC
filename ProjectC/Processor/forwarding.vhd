@@ -113,11 +113,10 @@ end if;
 
 if(isLoad = '1') then
 
-  
   -- Load hazard A Rt
   if(ex_mem_RegWen = '1') then
     if(ex_mem_reg /= b"00000") then
-        if(id_ex_RegRs = ex_mem_reg) then
+        if(ex_mem_reg = id_ex_RegRs) then
           forA <= "011";
       end if;
     end if;
@@ -127,7 +126,7 @@ if(isLoad = '1') then
   if(ex_mem_RegWen = '1') then
     if(ex_mem_reg /= b"00000") then
       if(MemHazA = '1') then 
-        if(id_ex_RegRs = mem_wb_reg) then
+        if(mem_wb_reg = id_ex_RegRs) then
             forB <= "011";
           end if;
       end if;
