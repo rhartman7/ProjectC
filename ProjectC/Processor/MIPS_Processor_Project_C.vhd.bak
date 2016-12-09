@@ -141,6 +141,14 @@ component mux_21_5_bit
 		o_Z : out std_logic_vector(N-1 downto 0));
 end component;
 
+component mux_21_10_bit
+	generic(N : integer := 10);
+  	port(i_X  : in std_logic_vector(N-1 downto 0);
+		i_Y: in std_logic_vector(N-1 downto 0);
+		s_1 : in std_logic;
+		o_Z : out std_logic_vector(N-1 downto 0));
+end component;
+
 component store 
 	port(
 		alu_in : in std_logic_vector(31 downto 0);
@@ -356,7 +364,7 @@ signal s_alu_zero_out, s_alu_c_out,s_alu_overflow : std_logic;
 --signal for branch detection unit
 signal s_take_branch : std_logic;
 --signals for PC
-signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value      : std_logic_vector(31 downto 0); 
+signal  IF_ID_PC, IF_PC, s_new_PC_current, s_PC_value, s_current_PC_value, s_pc_value_final      : std_logic_vector(31 downto 0); 
 --brnach
 signal ID_branch_logic, ID_EX_branch_logic, EX_MEM_branch_logic, MEM_WB_branch_logic  : std_logic_vector(31 downto 0);
 -- forwarding signals
@@ -370,6 +378,7 @@ signal  ID_controller,ID_EX_controller, EX_MEM_controller, MEM_WB_controller, ID
 
 --CONTROL SIGNALS 
 signal ID_alu_controller, ID_EX_alu_controller, EX_MEM_alu_controller, MEM_WB_alu_controller : std_logic_vector(10 downto 0);
+signal s_load_store_mem_input : std_logic_vector(9 downto 0);
 
 begin
 
@@ -382,10 +391,20 @@ which_pc_value: mux_21_n
 		s_1 =>s_take_branch,
 		o_Z => s_PC_value);
 
+
+--choosing which pc on a stall
+mux_21_which_pc_on_stall: mux_21_n 	
+  	port MAP
+  	(i_X  => s_PC_value,
+		i_Y  =>s_current_PC_value,
+		s_1 => ex_mem_flush,
+		o_Z => s_pc_value_final);
+
+
 --PC Register
 pc: PC_Register
   port MAP(
-    PC_next =>s_PC_value,          
+    PC_next =>s_pc_value_final, --s_pc_value,         
     PC_clk =>clk,
     PC_reset =>s_reset,
     PC_write_en=>pc_stall,         ---!!!!!!!
@@ -662,15 +681,22 @@ port MAP	(
 store_data: store
 	port MAP
 		(
-		alu_in => EX_MEM_alu_out,
+		alu_in => MEM_WB_alu_out,
 		reg_out_2_in =>EX_MEM_reg_out_2,
 		load_size =>EX_MEM_controller(6 downto 5),		--s_load_size,
 		store_data=>s_store_data,
 		store_byteena=>s_store_byteena);
 
+-- MUX - which value goes into memory
+which_memory_input: mux_21_10_bit
+	port MAP(
+		i_X  =>EX_MEM_alu_out(11 downto 2),
+		i_Y =>MEM_WB_alu_out(11 downto 2),
+		s_1 =>EX_MEM_controller(8),
+		o_Z => s_load_store_mem_input);
  --data memory
 data_mem : mem
-	port MAP  ( 	address	=>EX_MEM_alu_out(11 downto 2),
+	port MAP  ( 	address	=>s_load_store_mem_input,--EX_MEM_alu_out(11 downto 2),--
 			byteena	=> s_store_byteena,
 			clock	=>clk,
 			data	=>s_store_data,
