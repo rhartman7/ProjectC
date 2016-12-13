@@ -21,26 +21,27 @@ slt $4, $2, $1			#$4= 1
 slti $5, $2, 15		#$5=1
 sltiu $6, $5, -1  		#$6=1
 sltu $7, $6, $2  		#$7=1
-addi $3, $zero, 65535 	#$3 = x0000FFFF
-sll $4, $3, 2				#$4= x00FFFF00
-addi $5, $zero, 65535 	#$5 = x0000FFFF
-srl $6, $5, 2				#$6= x000000FF
-addi $7, $zero, 65535 	#$7= x0000FFFF
-sra $8, $7, 2				#$8= x000000FF
+addi $3, $zero, 65535 	#$3 = xFFFFFFFF
+sll $4, $3, 2				#$4= xFFFFFFFC
+addi $5, $zero, 65535 	#$5 = xFFFFFFFF
+srl $6, $5, 2				#$6= x3FFFFFFF
+addi $7, $zero, 65535 	#$7= xFFFFFFFF
+sra $8, $7, 2				#$8= xFFFFFFFF
 addi $4, $zero, 2			#$4=2
-addi $3, $zero, 65535 	#$3 = x0000FFFF
-sllv $7, $3, $4			#$7= x00FFFF00
-addi $5, $zero, 65535 	#$5 = x0000FFFF
-srlv $8, $5, $4			#$8=x000000FF
-addi $7, $zero, 65535 	#$7 = x0000FFFF
-srav $9, $7, $4			#$9=x000000FF
+addi $3, $zero, 65535 	#$3 = xFFFFFFFF
+sllv $7, $3, $4			#$7= xFFFFFFFC
+addi $5, $zero, 65535 	#$5 = xFFFFFFFF
+srlv $8, $5, $4			#$8=x3FFFFFFF
+addi $7, $zero, 65535 	#$7 = xFFFFFFFF
+srav $9, $7, $4			#$9=xFFFFFFFF
 add $3, $zero, $zero 		#$3=x00000000
 lui $3, 0xABCD 			#$3=xABCD
-
-
+addi $4, $zero, 5	 		#4=5
+lw $6, 0($4) 			#$6=0000002
+add $9, $6, $4 			#$9=7
 addi $3, $zero, 5		#$3=5
-lb $4,  0($3)			#$4=??????????/
-lh $5, 0($3)			#$5=0000000, 00000001
+lb $4,  0($3)			#$4=00000001
+lh $5, 0($3)			#$5=11111100
 addi $4, $zero, 5	 	#4=5
 lw $6, 0($4) 		#$6=0000001
 addi $3, $zero, 5		#$3=5
@@ -57,44 +58,33 @@ sw $7, 0($8)			#mem[3]=$7
 p0:
 bgezal $3, p7
 sll $zero, $zero, 0
-
 p1:
 j p3
-
 p2:
 bne $1, $zero, p5
 sll $zero, $zero, 0
-
  p3:
 bgez $1, p2
 sll $zero, $zero, 0
-
 p4:
 jal p0
-
 p5:
 blez $zero, p4
 sll $zero, $zero, 0
-
 p6: 
  bltz $4, p8
  sll $zero, $zero, 0
-
 p7:
 bltzal $zero, p6
 sll $zero, $zero, 0
-
 p8:
 bgtz $3, p10
 sll $zero, $zero, 0
-
 p9:
 jalr $3, $2
-
 p10:
 beq $zero, $zero, p9
 sll $zero, $zero, 0
-
 p11:
 jr $3
 
